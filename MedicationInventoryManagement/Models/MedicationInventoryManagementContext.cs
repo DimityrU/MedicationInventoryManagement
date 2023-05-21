@@ -5,19 +5,35 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace MedicationInventoryManagement.Models
 {
-    public partial class MedicationInventoryManagementContext : DbContext
+    public partial class MMContext : DbContext
     {
         public virtual DbSet<Medication> Medications { get; set; }
         public virtual DbSet<Notification> Notifications { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<User> Users { get; set; }
 
-        public MedicationInventoryManagementContext()
+        public MMContext()
         {
         }
 
-        public MedicationInventoryManagementContext(DbContextOptions<MedicationInventoryManagementContext> options) : base(options)
+        public MMContext(DbContextOptions<MMContext> options) : base(options)
         {
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            string path = Directory.GetCurrentDirectory();
+            // Build configuration
+            var config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .Build();
+
+            // Get connection string from appsettings.json
+            string connectionString = config.GetConnectionString("data");
+
+            // Configure SQL Server provider
+            optionsBuilder.UseSqlServer(connectionString);
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

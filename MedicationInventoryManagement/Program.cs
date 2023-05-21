@@ -1,3 +1,6 @@
+using MedicationInventoryManagement.Models;
+using Microsoft.EntityFrameworkCore;
+
 namespace MedicationInventoryManagement
 {
     public class Program
@@ -8,6 +11,9 @@ namespace MedicationInventoryManagement
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+
+            var connectionString = builder.Configuration.GetConnectionString("data");
+            builder.Services.AddDbContext<MMContext>(options => options.UseSqlServer(connectionString));
 
             var app = builder.Build();
 
