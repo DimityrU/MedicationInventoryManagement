@@ -33,5 +33,10 @@ namespace MedicationInventoryManagement.Controllers
                 return View("Index", user);
             }
         }
+
+        public IActionResult LogOut()
+        {
+            return View("Index");
+        }
     }
 }
