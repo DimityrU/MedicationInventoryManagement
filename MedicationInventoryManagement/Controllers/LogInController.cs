@@ -30,7 +30,7 @@ namespace MedicationInventoryManagement.Controllers
             else
             {
                 ModelState.AddModelError("", "Invalid username or password");
-                return View("Index",user);
+                return View("Index", user);
             }
         }
     }
