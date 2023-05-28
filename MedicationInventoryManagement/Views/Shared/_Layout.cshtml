@@ -30,6 +30,9 @@
                         @if (User.Identity.IsAuthenticated)
                         {
                             <li class="nav-item">
+                                <span class="nav-link text-dark">Welcome, @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="LogIn" asp-action="LogOut">Log Out</a>
                             </li>
                         }

@@ -1,6 +1,9 @@
 ﻿using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace MedicationInventoryManagement.Controllers
 {
@@ -19,12 +22,29 @@ namespace MedicationInventoryManagement.Controllers
         }
 
         [HttpPost]
-        public IActionResult LogIn(User user)
+        public async Task<IActionResult> LogIn(User user)
         {
             bool isValidUser = _logInService.ValidateUser(user.UserName, user.Password);
 
             if (isValidUser)
             {
+
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    // Add additional claims if needed
+                };
+
+                var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var principal = new ClaimsPrincipal(identity);
+
+                // Sign in the user
+                await HttpContext.SignInAsync(principal, new AuthenticationProperties
+                {
+                    IsPersistent = true, // Set to true if you want to persist the authentication across sessions
+                    ExpiresUtc = DateTime.UtcNow.AddHours(2), // Set the expiration time for the authentication cookie
+                });
+
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -36,7 +56,9 @@ namespace MedicationInventoryManagement.Controllers
 
         public IActionResult LogOut()
         {
-            return View("Index");
+            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+            return RedirectToAction("Index", "LogIn");
         }
     }
 }

@@ -1,4 +1,5 @@
 using MedicationInventoryManagement.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedicationInventoryManagement
@@ -15,6 +16,12 @@ namespace MedicationInventoryManagement
             var connectionString = builder.Configuration.GetConnectionString("data");
             builder.Services.AddDbContext<MMContext>(options => options.UseSqlServer(connectionString));
             builder.Services.Configure();
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/LogIn/Index"; // Set the login page URL
+                    options.LogoutPath = "/LogIn/LogOut"; // Set the logout page URL
+                });
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -30,11 +37,12 @@ namespace MedicationInventoryManagement
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=LogIn}/{action=Index}");
+                pattern: "{controller='Home}/{action=Index}");
 
             app.Run();
         }
