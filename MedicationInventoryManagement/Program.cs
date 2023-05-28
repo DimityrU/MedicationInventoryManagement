@@ -19,8 +19,8 @@ namespace MedicationInventoryManagement
             builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options =>
                 {
-                    options.LoginPath = "/LogIn/Index"; // Set the login page URL
-                    options.LogoutPath = "/LogIn/LogOut"; // Set the logout page URL
+                    options.LoginPath = "/LogIn/Index";
+                    options.LogoutPath = "/LogIn/LogOut";
                 });
             var app = builder.Build();
 

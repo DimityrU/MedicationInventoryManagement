@@ -32,17 +32,15 @@ namespace MedicationInventoryManagement.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
-                    // Add additional claims if needed
                 };
 
                 var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
                 var principal = new ClaimsPrincipal(identity);
 
-                // Sign in the user
                 await HttpContext.SignInAsync(principal, new AuthenticationProperties
                 {
-                    IsPersistent = true, // Set to true if you want to persist the authentication across sessions
-                    ExpiresUtc = DateTime.UtcNow.AddHours(2), // Set the expiration time for the authentication cookie
+                    IsPersistent = true,
+                    ExpiresUtc = DateTime.UtcNow.AddHours(8),
                 });
 
                 return RedirectToAction("Index", "Home");
