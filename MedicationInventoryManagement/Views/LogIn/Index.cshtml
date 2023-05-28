@@ -4,14 +4,13 @@
     ViewData["Title"] = "Log In";
 }
 
-
 <h1 class="text-center mb-5">Medication Inventory Management</h1>
 
 <div class="container d-flex align-items-center justify-content-center">
     <div class="card mx-auto login-form">
         <div class="card-body">
             <h2 class="card-title text-center">Log In</h2> 
-            <form asp-action="Index">
+            <form asp-action="LogIn">
                 <div class="form-group">
                     <label asp-for="UserName" class="control-label"></label>
                     <input asp-for="UserName" placeholder="Enter your username" class="form-control"/>

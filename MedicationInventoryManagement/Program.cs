@@ -14,7 +14,7 @@ namespace MedicationInventoryManagement
 
             var connectionString = builder.Configuration.GetConnectionString("data");
             builder.Services.AddDbContext<MMContext>(options => options.UseSqlServer(connectionString));
-
+            builder.Services.Configure();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
