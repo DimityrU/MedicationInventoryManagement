@@ -20,3 +20,7 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.login-form {
+    width: 400px ;
+}
