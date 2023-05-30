@@ -1,0 +1,19 @@
+﻿@model MedicationInventoryManagement.Models.Medication
+
+<h2>Create Medication</h2>
+
+<form asp-controller="Home" asp-action="Create" method="post">
+    <div class="form-group">
+        <label for="medicationName">Medication Name</label>
+        <input type="text" class="form-control" id="medicationName" name="medicationName" required>
+    </div>
+    <div class="form-group">
+        <label for="expirationDate">Expiration Date</label>
+        <input type="date" class="form-control" id="expirationDate" name="expirationDate" required>
+    </div>
+    <div class="form-group">
+        <label for="quantity">Quantity</label>
+        <input type="number" class="form-control" id="quantity" name="quantity" required>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>

@@ -1,5 +1,35 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<Medication>;
+
 @{
+    ViewData["Title"] = "Log In";
 }
+
+
+<h1 class="text-center mb-5">Medication Inventory</h1>
+
+<a asp-controller="Home" asp-action="Create">Add new medication</a>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Medication Name</th>
+            <th>Expiration Date</th>
+            <th>Quantity</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var medication in Model)
+    {
+        <tr>
+            <td>@medication.MedicationName</td>
+            <td>@medication.ExpirationDate.ToShortDateString()</td>
+            <td>@medication.Quantity</td>
+            <td>
+                    <a asp-controller="Home" asp-action="Delete" asp-route-medicationId="@medication.MedicationId">Remove</a>
+            </td>
+        </tr>
+    }
+    </tbody>
+</table>
+
