@@ -1,3 +1,4 @@
+using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Services;
 
 namespace TestMedicationInventoryManagement.LogIn
@@ -6,31 +7,31 @@ namespace TestMedicationInventoryManagement.LogIn
     public class LogInServiceTests
     {
         [TestMethod]
-        public void ValidateUser_ValidCredentials_ReturnsTrue()
+        public async Task ValidateUser_ValidCredentials_ReturnsTrue()
         {
-            var logInService = new LogInService();
+            var logInService = new LogInService(new MMContext());
 
-            bool result = logInService.ValidateUser("DimityrU", "userMM23");
+            var result = await logInService.ValidateUser("DimityrU", "userMM23");
 
             Assert.IsTrue(result);
         }
 
         [TestMethod]
-        public void ValidateUser_InvalidUsername_ReturnsFalse()
+        public async Task ValidateUser_InvalidUsername_ReturnsFalse()
         {
-            var logInService = new LogInService();
+            var logInService = new LogInService(new MMContext());
 
-            bool result = logInService.ValidateUser("username", "userMM23");
+            var result = await logInService.ValidateUser("username", "userMM23");
 
             Assert.IsFalse(result);
         }
 
         [TestMethod]
-        public void ValidateUser_InvalidPassword_ReturnsFalse()
+        public async Task ValidateUser_InvalidPassword_ReturnsFalse()
         {
-            var logInService = new LogInService();
+            var logInService = new LogInService(new MMContext());
             
-            bool result = logInService.ValidateUser("DimityrU", "user123");
+            var result = await logInService.ValidateUser("DimityrU", "user123");
 
             Assert.IsFalse(result);
         }

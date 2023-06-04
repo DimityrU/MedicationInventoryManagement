@@ -24,11 +24,10 @@ namespace MedicationInventoryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> LogIn(User user)
         {
-            bool isValidUser = _logInService.ValidateUser(user.UserName, user.Password);
+            var isValidUser = await _logInService.ValidateUser(user.UserName, user.Password);
 
             if (isValidUser)
             {
-
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
@@ -52,9 +51,9 @@ namespace MedicationInventoryManagement.Controllers
             }
         }
 
-        public IActionResult LogOut()
+        public async Task<IActionResult> LogOut()
         {
-            HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
             return RedirectToAction("Index", "LogIn");
         }

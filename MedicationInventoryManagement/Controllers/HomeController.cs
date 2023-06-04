@@ -18,7 +18,7 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
             if (TempData["ErrorMessage"] != null)
             {
@@ -28,7 +28,7 @@ namespace MedicationInventoryManagement.Controllers
 
             try
             {
-                var allMedications = _medicationService.GetAllMedications()?.ToList();
+                var allMedications = await _medicationService.GetAllMedications();
                 return View(allMedications);
             }
             catch (Exception)
@@ -39,7 +39,7 @@ namespace MedicationInventoryManagement.Controllers
         }
 
         [Authorize]
-        public IActionResult Delete(Guid medicationId)
+        public async Task<IActionResult> Delete(Guid medicationId)
         {
             try
             {
@@ -48,7 +48,7 @@ namespace MedicationInventoryManagement.Controllers
                     TempData["ErrorMessage"] = "System error, please try again later.";
                     return RedirectToAction("Index");
                 }
-                _medicationService.RemoveMedication(medicationId);
+                await _medicationService.RemoveMedication(medicationId);
                 return RedirectToAction("Index");
             }
             catch (Exception)
@@ -75,7 +75,7 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Create(Medication medication)
+        public async Task<IActionResult> Create(Medication medication)
         {
 
             if (medication.Quantity <= 0)
@@ -91,7 +91,7 @@ namespace MedicationInventoryManagement.Controllers
 
             try
             {
-                _medicationService.AddMedication(medication);
+                await _medicationService.AddMedication(medication);
                 return RedirectToAction("Index");
             }
             catch (Exception)
@@ -104,7 +104,7 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpPost]
-        public IActionResult Reduce(Guid medicationId, int newQuantity)
+        public async Task<IActionResult> Reduce(Guid medicationId, int newQuantity)
         {
             try
             {
@@ -114,7 +114,7 @@ namespace MedicationInventoryManagement.Controllers
                     return RedirectToAction("Index");
                 }
 
-                _medicationService.ReduceQuantity(medicationId, newQuantity);
+                await _medicationService.ReduceQuantity(medicationId, newQuantity);
                 return RedirectToAction("Index");
 
             }

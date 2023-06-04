@@ -1,5 +1,6 @@
 ﻿using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedicationInventoryManagement.Services;
 
@@ -12,34 +13,34 @@ public class MedicationService : IMedicationService
         _context = context;
     }
 
-    public IEnumerable<Medication> GetAllMedications()
+    public async Task<IEnumerable<Medication>> GetAllMedications()
     {
-        return _context.Medications;
+        return await _context.Medications.ToListAsync();
     }
 
-    public void AddMedication(Medication medication)
+    public async Task AddMedication(Medication medication)
     {
         medication.MedicationId = Guid.NewGuid();
 
-        _context.Medications.Add(medication);
-        _context.SaveChangesAsync();
+        await _context.Medications.AddAsync(medication);
+        await _context.SaveChangesAsync();
     }
 
-    public void RemoveMedication(Guid medicationId)
+    public async Task RemoveMedication(Guid medicationId)
     {
-        var medication = _context.Medications.FirstOrDefault(m => m.MedicationId == medicationId);
+        var medication =  await _context.Medications.FirstOrDefaultAsync(m => m.MedicationId == medicationId);
         if (medication == null) return;
         _context.Medications.Remove(medication);
-        _context.SaveChangesAsync();
+         await _context.SaveChangesAsync();
     }
 
-    public void ReduceQuantity(Guid medicationId, int newQuantity)
+    public async Task ReduceQuantity(Guid medicationId, int newQuantity)
     {
-        var medication = _context.Medications.FirstOrDefault(m => m.MedicationId == medicationId);
+        var medication = await _context.Medications.FirstOrDefaultAsync(m => m.MedicationId == medicationId);
         if (medication == null) return;
         var oldQuantity = medication.Quantity;
         if(oldQuantity < newQuantity || newQuantity <= 0) return;
         medication.Quantity = newQuantity;
-        _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
     }
 }
