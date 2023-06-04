@@ -8,4 +8,6 @@ public class ModalData
     public string ButtonType { get; set; }
     public string ControllerName { get; set; }
     public string ActionName { get; set; }
+
+    public int? Quantity { get; set; }
 }

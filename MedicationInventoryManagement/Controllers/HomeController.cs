@@ -32,8 +32,6 @@ namespace MedicationInventoryManagement.Controllers
         [Authorize]
         public IActionResult Delete(Guid medicationId)
         {
-            //TODO: Check if medication have valid data
-
             _medicationService.RemoveMedication(medicationId);
 
             return RedirectToAction("Index");
@@ -54,6 +52,15 @@ namespace MedicationInventoryManagement.Controllers
 
             return RedirectToAction("Index");
 
+        }
+
+        [Authorize]
+        [HttpPost]
+        public IActionResult Reduce(Guid medicationId, int quantity)
+        {
+            _medicationService.ReduceQuantity(medicationId, quantity);
+
+            return RedirectToAction("Index");
         }
     }
 }

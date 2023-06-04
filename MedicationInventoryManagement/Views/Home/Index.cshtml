@@ -25,7 +25,8 @@
             <td>@medication.ExpirationDate.ToString("dd.MM.yyyy")</td>
             <td>@medication.Quantity</td>
             <td>
-                <a type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-@medication.MedicationId">Remove</a>
+                    <a type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-Remove-@medication.MedicationId">Remove</a>
+                    <a type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal-Reduce-@medication.MedicationId">Reduce Quantity</a>
                 @{
                     var removeMedication = new ModalData()
                     {
@@ -36,10 +37,21 @@
                         ControllerName = "Home",
                         ActionName = "Delete"
                     };
+                    var reduceQuantity = new ModalData()
+                    {
+                        Id = medication.MedicationId,
+                        MessageText = "",
+                        ButtonText = "Reduce",
+                        ButtonType = "warning",
+                        ControllerName = "Home",
+                        ActionName = "Reduce",
+                        Quantity = medication.Quantity
+                    };
                 }
             </td>
         </tr>
-            @Html.Partial("_Modal", removeMedication)
+        @await Html.PartialAsync("_Modal", removeMedication)
+        @await Html.PartialAsync("_Modal", reduceQuantity)
     }
     </tbody>
 </table>

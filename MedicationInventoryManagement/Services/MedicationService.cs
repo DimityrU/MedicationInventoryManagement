@@ -12,7 +12,7 @@ public class MedicationService : IMedicationService
         _context = context;
     }
 
-    public IEnumerable<Medication>? GetAllMedications()
+    public IEnumerable<Medication> GetAllMedications()
     {
         return _context.Medications;
     }
@@ -30,6 +30,16 @@ public class MedicationService : IMedicationService
         var medication = _context.Medications.FirstOrDefault(m => m.MedicationId == medicationId);
         if (medication == null) return;
         _context.Medications.Remove(medication);
+        _context.SaveChanges();
+    }
+
+    public void ReduceQuantity(Guid medicationId, int quantity)
+    {
+        var medication = _context.Medications.FirstOrDefault(m => m.MedicationId == medicationId);
+        if (medication == null) return;
+        var oldQuantity = medication.Quantity;
+        if(oldQuantity < quantity || quantity <= 0) return;
+        medication.Quantity = quantity;
         _context.SaveChanges();
     }
 }
