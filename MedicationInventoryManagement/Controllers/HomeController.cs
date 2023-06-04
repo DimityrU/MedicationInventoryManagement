@@ -20,9 +20,9 @@ namespace MedicationInventoryManagement.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            if (TempData["ErrorMessage"] == null)
+            if (TempData["ErrorMessage"] != null)
             {
-                ModelState.AddModelError("", "Bombaaaaaaaaaaaaaa");
+                ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occur! Please try again!");
                 return View();
             }
 
@@ -43,6 +43,11 @@ namespace MedicationInventoryManagement.Controllers
         {
             try
             {
+                if (medicationId == Guid.Empty)
+                {
+                    TempData["ErrorMessage"] = "System error, please try again later.";
+                    return RedirectToAction("Index");
+                }
                 _medicationService.RemoveMedication(medicationId);
                 return RedirectToAction("Index");
             }
@@ -73,6 +78,17 @@ namespace MedicationInventoryManagement.Controllers
         public IActionResult Create(Medication medication)
         {
 
+            if (medication.Quantity <= 0)
+            {
+                ModelState.AddModelError("", "Medication quantity shouldn't be less than 0.");
+                return View();
+            }
+            else if(medication.ExpirationDate < DateTime.Now.AddMonths(1))
+            {
+                ModelState.AddModelError("", "Medication is expired or date is too soon to be added to the system.");
+                return View();
+            }
+
             try
             {
                 _medicationService.AddMedication(medication);
@@ -90,9 +106,24 @@ namespace MedicationInventoryManagement.Controllers
         [HttpPost]
         public IActionResult Reduce(Guid medicationId, int newQuantity)
         {
-            _medicationService.ReduceQuantity(medicationId, newQuantity);
+            try
+            {
+                if (medicationId == Guid.Empty)
+                {
+                    TempData["ErrorMessage"] = "System error, please try again later.";
+                    return RedirectToAction("Index");
+                }
 
-            return RedirectToAction("Index");
+                _medicationService.ReduceQuantity(medicationId, newQuantity);
+                return RedirectToAction("Index");
+
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Error occurred while reducing the medication.";
+                return RedirectToAction("Index");
+            }
+
         }
     }
 }

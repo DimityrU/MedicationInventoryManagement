@@ -1,5 +1,12 @@
 ﻿@model MedicationInventoryManagement.Entities.Medication
 
+<div class="position-fixed end-0 me-3">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage);
+    }
+</div>
+
 <h2>Create Medication</h2>
 
 <form asp-controller="Home" asp-action="Create" method="post">
