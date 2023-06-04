@@ -22,7 +22,7 @@ public class MedicationService : IMedicationService
         medication.MedicationId = Guid.NewGuid();
 
         _context.Medications.Add(medication);
-        _context.SaveChanges();
+        _context.SaveChangesAsync();
     }
 
     public void RemoveMedication(Guid medicationId)
@@ -30,16 +30,16 @@ public class MedicationService : IMedicationService
         var medication = _context.Medications.FirstOrDefault(m => m.MedicationId == medicationId);
         if (medication == null) return;
         _context.Medications.Remove(medication);
-        _context.SaveChanges();
+        _context.SaveChangesAsync();
     }
 
-    public void ReduceQuantity(Guid medicationId, int quantity)
+    public void ReduceQuantity(Guid medicationId, int newQuantity)
     {
         var medication = _context.Medications.FirstOrDefault(m => m.MedicationId == medicationId);
         if (medication == null) return;
         var oldQuantity = medication.Quantity;
-        if(oldQuantity < quantity || quantity <= 0) return;
-        medication.Quantity = quantity;
-        _context.SaveChanges();
+        if(oldQuantity < newQuantity || newQuantity <= 0) return;
+        medication.Quantity = newQuantity;
+        _context.SaveChangesAsync();
     }
 }

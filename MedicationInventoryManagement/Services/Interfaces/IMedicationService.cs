@@ -10,5 +10,5 @@ public interface IMedicationService
 
     public void RemoveMedication(Guid medicationId);
 
-    public void ReduceQuantity(Guid medicationId, int quantity);
+    public void ReduceQuantity(Guid medicationId, int newQuantity);
 }

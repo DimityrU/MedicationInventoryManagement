@@ -4,11 +4,25 @@
     ViewData["Title"] = "Medication Inventory";
 }
 
+
+<div class="position-fixed end-0">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>Error!</strong> @error.ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+</div>
+
 <h1 class="text-center mb-5">Medication Inventory</h1>
+<a asp-controller="Home" asp-action="Create" class="btn btn-primary">Add new medication</a>
 
-<a asp-controller="Home" asp-action="Create">Add new medication</a>
 
-<table class="table table-striped">
+
+@if (@Model != null)
+{
+    <table class="table table-striped">
     <thead>
     <tr>
         <th>Medication Name</th>
@@ -55,3 +69,12 @@
     }
     </tbody>
 </table>
+}
+else
+{
+    <div class="position-fixed top-45 start-50 translate-middle">
+        <div class="alert alert-warning" role="alert">
+            <h3>No medication in System</h3>
+        </div>
+    </div>
+}
