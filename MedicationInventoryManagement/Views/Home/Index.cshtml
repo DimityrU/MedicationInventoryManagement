@@ -1,9 +1,8 @@
-﻿@model IEnumerable<Medication>;
+﻿@model IEnumerable<MedicationInventoryManagement.Entities.Medication>;
 
 @{
-    ViewData["Title"] = "Log In";
+    ViewData["Title"] = "Medication Inventory";
 }
-
 
 <h1 class="text-center mb-5">Medication Inventory</h1>
 
@@ -11,25 +10,36 @@
 
 <table class="table table-striped">
     <thead>
-        <tr>
-            <th>Medication Name</th>
-            <th>Expiration Date</th>
-            <th>Quantity</th>
-            <th></th>
-        </tr>
+    <tr>
+        <th>Medication Name</th>
+        <th>Expiration Date</th>
+        <th>Quantity</th>
+        <th>Options</th>
+    </tr>
     </thead>
     <tbody>
     @foreach (var medication in Model)
     {
         <tr>
             <td>@medication.MedicationName</td>
-            <td>@medication.ExpirationDate.ToShortDateString()</td>
+            <td>@medication.ExpirationDate.ToString("dd.MM.yyyy")</td>
             <td>@medication.Quantity</td>
             <td>
-                    <a asp-controller="Home" asp-action="Delete" asp-route-medicationId="@medication.MedicationId">Remove</a>
+                <a type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-@medication.MedicationId">Remove</a>
+                @{
+                    var removeMedication = new ModalData()
+                    {
+                        Id = medication.MedicationId,
+                        MessageText = "Are you sure you want to remove this medication from the inventory?",
+                        ButtonText = "Remove",
+                        ButtonType = "danger",
+                        ControllerName = "Home",
+                        ActionName = "Delete"
+                    };
+                }
             </td>
         </tr>
+            @Html.Partial("_Modal", removeMedication)
     }
     </tbody>
 </table>
-

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace MedicationInventoryManagement.Models
+namespace MedicationInventoryManagement.Entities
 {
     public partial class MMContext : DbContext
     {

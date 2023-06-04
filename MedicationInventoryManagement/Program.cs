@@ -1,4 +1,4 @@
-using MedicationInventoryManagement.Models;
+using MedicationInventoryManagement.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 

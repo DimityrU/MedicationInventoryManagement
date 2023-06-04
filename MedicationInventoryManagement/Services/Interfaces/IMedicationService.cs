@@ -1,4 +1,4 @@
-﻿using MedicationInventoryManagement.Models;
+﻿using MedicationInventoryManagement.Entities;
 
 namespace MedicationInventoryManagement.Services.Interfaces;
 

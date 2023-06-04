@@ -1,4 +1,4 @@
-﻿using MedicationInventoryManagement.Models;
+﻿using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Services.Interfaces;
 
 namespace MedicationInventoryManagement.Services;
@@ -11,7 +11,6 @@ public class MedicationService : IMedicationService
     {
         _context = context;
     }
-
 
     public IEnumerable<Medication>? GetAllMedications()
     {

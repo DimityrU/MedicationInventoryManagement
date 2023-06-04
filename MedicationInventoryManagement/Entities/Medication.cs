@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace MedicationInventoryManagement.Models
+namespace MedicationInventoryManagement.Entities
 {
     public partial class Medication
     {
