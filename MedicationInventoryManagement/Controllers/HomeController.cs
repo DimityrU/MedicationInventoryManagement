@@ -80,7 +80,7 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Create(Medication medication)
+        public async Task<IActionResult> Create(MedicationDTO medication)
         {
             var response = await _medicationService.AddMedication(medication);
 

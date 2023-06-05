@@ -12,7 +12,7 @@ namespace MedicationInventoryManagement
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddAutoMapper(typeof(ApplicationProfile));
             var connectionString = builder.Configuration.GetConnectionString("data");
             builder.Services.AddDbContext<MMContext>(options => options.UseSqlServer(connectionString));
             builder.Services.Configure();

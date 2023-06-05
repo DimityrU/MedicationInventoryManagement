@@ -1,4 +1,5 @@
-﻿using MedicationInventoryManagement.Entities;
+﻿using AutoMapper;
+using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -8,29 +9,39 @@ namespace MedicationInventoryManagement.Services;
 public class MedicationService : IMedicationService
 {
     private readonly MMContext _context;
+    private readonly IMapper _mapper;
 
-    public MedicationService(MMContext context)
+    public MedicationService(MMContext context, IMapper mapper)
     {
         _context = context;
+        _mapper = mapper;
     }
 
-    public async Task<IEnumerable<Medication>> GetAllMedications()
+    public async Task<IEnumerable<MedicationDTO>> GetAllMedications()
     {
-        return await _context.Medications.ToListAsync();
+        var medications = await _context.Medications.ToListAsync();
+        var medicationResponse = new List<MedicationDTO>();
+
+        foreach (var medication in medications)
+        {
+            medicationResponse.Add(_mapper.Map<MedicationDTO>(medication));
+        }
+
+        return medicationResponse;
     }
 
-    public async Task<BaseResponse> AddMedication(Medication medication)
+    public async Task<BaseResponse> AddMedication(MedicationDTO medicationRequest)
     {
         var response = new BaseResponse();
 
         try
         {
-            if (medication.Quantity <= 0)
+            if (medicationRequest.Quantity <= 0)
             {
                 response.AddError("Medication quantity shouldn't be less than 0.");
             }
 
-            if (medication.ExpirationDate < DateTime.Now.AddMonths(1))
+            if (medicationRequest.ExpirationDate < DateTime.Now.AddMonths(1))
             {
                 response.AddError("Medication is expired or date is too soon to be added to the system.");
             }
@@ -39,7 +50,7 @@ public class MedicationService : IMedicationService
             {
                 return response;
             }
-            medication.MedicationId = Guid.NewGuid();
+            var medication = _mapper.Map<Medication>(medicationRequest);
             await _context.Medications.AddAsync(medication);
             await _context.SaveChangesAsync();
         }

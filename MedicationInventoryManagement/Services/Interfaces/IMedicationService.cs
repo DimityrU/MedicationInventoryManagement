@@ -5,9 +5,9 @@ namespace MedicationInventoryManagement.Services.Interfaces;
 
 public interface IMedicationService
 {
-    public Task<IEnumerable<Medication>> GetAllMedications();
+    public Task<IEnumerable<MedicationDTO>> GetAllMedications();
 
-    public Task<BaseResponse> AddMedication(Medication medication);
+    public Task<BaseResponse> AddMedication(MedicationDTO medicationRequest);
 
     public Task RemoveMedication(Guid medicationId);
 
