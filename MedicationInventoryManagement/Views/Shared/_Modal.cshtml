@@ -14,8 +14,8 @@
                     @if (Model.Quantity != null)
                     {
                         <div class="mb-3">
-                            <label for="quantity" class="col-form-label">Current Quantity:</label>
-                            <input type="number" class="form-control" id="quantity" name="quantity" value="@Model.Quantity" min="1" max="@Model.Quantity">
+                            <label for="newQuantity" class="col-form-label">Current Quantity:</label>
+                            <input type="number" class="form-control" id="newQuantity" name="newQuantity" value="@Model.Quantity" min="1" max="@Model.Quantity">
                         </div>
                         <input type="hidden" name="medicationId" value="@Model.Id" />}
                 </div>

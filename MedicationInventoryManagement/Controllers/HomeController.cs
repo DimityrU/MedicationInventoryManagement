@@ -1,4 +1,5 @@
 ﻿using MedicationInventoryManagement.Entities;
+using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,22 +21,24 @@ namespace MedicationInventoryManagement.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            if (TempData["ErrorMessage"] != null)
-            {
-                ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occur! Please try again!");
-                return View();
-            }
-
             try
             {
-                var allMedications = await _medicationService.GetAllMedications();
-                return View(allMedications);
+                if (TempData["ErrorMessage"] != null)
+                {
+                    ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occur! Please try again!");
+                }
+                else
+                {
+                    var allMedications = await _medicationService.GetAllMedications();
+                    return View(allMedications);
+                }
             }
             catch (Exception)
             {
                 ModelState.AddModelError("", "No Medication in the inventory");
-                return View();
             }
+
+            return View();
         }
 
         [Authorize]
@@ -46,16 +49,18 @@ namespace MedicationInventoryManagement.Controllers
                 if (medicationId == Guid.Empty)
                 {
                     TempData["ErrorMessage"] = "System error, please try again later.";
-                    return RedirectToAction("Index");
                 }
-                await _medicationService.RemoveMedication(medicationId);
-                return RedirectToAction("Index");
+                else
+                {
+                    await _medicationService.RemoveMedication(medicationId);
+                }
             }
             catch (Exception)
             {
                 TempData["ErrorMessage"] = "Error occurred while deleting the medication.";
-                return RedirectToAction("Index");
             }
+
+            return RedirectToAction("Index");
         }
 
         [Authorize]
@@ -77,28 +82,15 @@ namespace MedicationInventoryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Medication medication)
         {
+            var response = await _medicationService.AddMedication(medication);
 
-            if (medication.Quantity <= 0)
+            if (response.Success) return RedirectToAction("Index");
+            foreach (var error in response.Errors)
             {
-                ModelState.AddModelError("", "Medication quantity shouldn't be less than 0.");
-                return View();
-            }
-            else if(medication.ExpirationDate < DateTime.Now.AddMonths(1))
-            {
-                ModelState.AddModelError("", "Medication is expired or date is too soon to be added to the system.");
-                return View();
+                ModelState.AddModelError("", error.ErrorMessage);
             }
 
-            try
-            {
-                await _medicationService.AddMedication(medication);
-                return RedirectToAction("Index");
-            }
-            catch (Exception)
-            {
-                TempData["ErrorMessage"] = "Error occurred while adding medication.";
-                return RedirectToAction("Index");
-            }
+            return View(medication);
 
         }
 
@@ -111,19 +103,18 @@ namespace MedicationInventoryManagement.Controllers
                 if (medicationId == Guid.Empty)
                 {
                     TempData["ErrorMessage"] = "System error, please try again later.";
-                    return RedirectToAction("Index");
                 }
-
-                await _medicationService.ReduceQuantity(medicationId, newQuantity);
-                return RedirectToAction("Index");
-
+                else
+                {
+                    await _medicationService.ReduceQuantity(medicationId, newQuantity);
+                }
             }
             catch (Exception)
             {
                 TempData["ErrorMessage"] = "Error occurred while reducing the medication.";
-                return RedirectToAction("Index");
             }
 
+            return RedirectToAction("Index");
         }
     }
 }

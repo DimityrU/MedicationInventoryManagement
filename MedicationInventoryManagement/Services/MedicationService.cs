@@ -1,4 +1,5 @@
 ﻿using MedicationInventoryManagement.Entities;
+using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,12 +19,36 @@ public class MedicationService : IMedicationService
         return await _context.Medications.ToListAsync();
     }
 
-    public async Task AddMedication(Medication medication)
+    public async Task<BaseResponse> AddMedication(Medication medication)
     {
-        medication.MedicationId = Guid.NewGuid();
+        var response = new BaseResponse();
 
-        await _context.Medications.AddAsync(medication);
-        await _context.SaveChangesAsync();
+        try
+        {
+            if (medication.Quantity <= 0)
+            {
+                response.AddError("Medication quantity shouldn't be less than 0.");
+            }
+
+            if (medication.ExpirationDate < DateTime.Now.AddMonths(1))
+            {
+                response.AddError("Medication is expired or date is too soon to be added to the system.");
+            }
+
+            if (!response.Success)
+            {
+                return response;
+            }
+            medication.MedicationId = Guid.NewGuid();
+            await _context.Medications.AddAsync(medication);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            response.AddError("Error occurred while adding medication.");
+        }
+
+        return response;
     }
 
     public async Task RemoveMedication(Guid medicationId)
