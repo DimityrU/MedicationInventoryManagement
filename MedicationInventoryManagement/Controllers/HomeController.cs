@@ -1,4 +1,7 @@
-﻿using MedicationInventoryManagement.Models;
+﻿using Azure;
+using MedicationInventoryManagement.Entities;
+using MedicationInventoryManagement.Models;
+using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,9 +10,120 @@ namespace MedicationInventoryManagement.Controllers
     [Authorize]
     public class HomeController : Controller
     {
-        public IActionResult Index()
+
+        private readonly IMedicationService _medicationService;
+
+        public HomeController(IMedicationService medicationService)
         {
+            _medicationService = medicationService;
+        }
+
+        [Authorize]
+        [HttpGet]
+        public async Task<IActionResult> Index()
+        {
+            try
+            {
+                if (TempData["ErrorMessage"] != null)
+                {
+                    ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occurred! Please try again!");
+                }
+                else
+                {
+                    var allMedications = await _medicationService.GetAllMedications();
+                    return View(allMedications);
+                }
+            }
+            catch (Exception)
+            {
+                ModelState.AddModelError("", "No Medication in the inventory");
+            }
+
             return View();
+        }
+
+        [Authorize]
+        public async Task<IActionResult> Delete(Guid medicationId)
+        {
+            try
+            {
+                if (medicationId == Guid.Empty)
+                {
+                    TempData["ErrorMessage"] = "System error, please try again later.";
+                }
+                else
+                {
+                    var response = await _medicationService.RemoveMedication(medicationId);
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Error occurred while deleting the medication.";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        [Authorize]
+        [HttpGet]
+        public IActionResult Create()
+        {
+            try
+            {
+                return View();
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Error occurred while redirecting.";
+                return RedirectToAction("Index");
+            }
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Create(MedicationDTO medication)
+        {
+            var response = await _medicationService.AddMedication(medication);
+
+            if (response.Success) return RedirectToAction("Index");
+            foreach (var error in response.Errors)
+            {
+                ModelState.AddModelError("", error.ErrorMessage);
+            }
+
+            return View(medication);
+
+        }
+
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Reduce(Guid medicationId, int newQuantity)
+        {
+            try
+            {
+                if (medicationId == Guid.Empty)
+                {
+                    TempData["ErrorMessage"] = "System error, please try again later.";
+                }
+                else
+                {
+                    var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Error occurred while reducing the medication.";
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

@@ -1,4 +1,4 @@
-using MedicationInventoryManagement.Models;
+using MedicationInventoryManagement.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,7 +12,7 @@ namespace MedicationInventoryManagement
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddAutoMapper(typeof(ApplicationProfile));
             var connectionString = builder.Configuration.GetConnectionString("data");
             builder.Services.AddDbContext<MMContext>(options => options.UseSqlServer(connectionString));
             builder.Services.Configure();

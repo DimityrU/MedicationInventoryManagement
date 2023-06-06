@@ -1,0 +1,36 @@
+﻿@model ModalData
+
+<div class="modal fade" id="modal-@Model.ButtonText-@Model.Id" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">@Model.ButtonText</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @using (Html.BeginForm(@Model.ActionName, @Model.ControllerName, FormMethod.Post, new { id = @Model.ButtonText }))
+            {
+                <div class="modal-body">
+                    @Model.MessageText
+                    @if (Model.Quantity != null)
+                    {
+                        <div class="mb-3">
+                            <label for="newQuantity" class="col-form-label">Current Quantity:</label>
+                            <input type="number" class="form-control" id="newQuantity" name="newQuantity" value="@Model.Quantity" min="1" max="@Model.Quantity">
+                        </div>
+                        <input type="hidden" name="medicationId" value="@Model.Id" />}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    @if (Model.Quantity != null)
+                    {
+                     <input type="submit" value="@Model.ButtonText" class="btn btn-@Model.ButtonType" />
+                    }
+                    else
+                    {
+                        <a type="button" class="btn btn-@Model.ButtonType" asp-controller="@Model.ControllerName" asp-action="@Model.ActionName" asp-route-medicationId="@Model.Id">@Model.ButtonText</a>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>

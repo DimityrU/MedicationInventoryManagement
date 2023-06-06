@@ -2,5 +2,5 @@
 
 public interface ILogInService
 {
-    bool ValidateUser(string username, string password);
+    Task<bool> ValidateUser(string username, string password);
 }
