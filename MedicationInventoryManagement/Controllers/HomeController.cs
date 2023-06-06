@@ -1,4 +1,5 @@
-﻿using MedicationInventoryManagement.Entities;
+﻿using Azure;
+using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -25,7 +26,7 @@ namespace MedicationInventoryManagement.Controllers
             {
                 if (TempData["ErrorMessage"] != null)
                 {
-                    ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occur! Please try again!");
+                    ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occurred! Please try again!");
                 }
                 else
                 {
@@ -52,7 +53,11 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
-                    await _medicationService.RemoveMedication(medicationId);
+                    var response = await _medicationService.RemoveMedication(medicationId);
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                    }
                 }
             }
             catch (Exception)
@@ -106,7 +111,11 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
-                    await _medicationService.ReduceQuantity(medicationId, newQuantity);
+                    var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                    }
                 }
             }
             catch (Exception)

@@ -2,7 +2,7 @@
 
 public class MedicationDTO
 {
-    public Guid MedicationId { get; set; }
+    public Guid? MedicationId { get; set; }
 
     public string MedicationName { get; set; }
     public int Quantity { get; set; }

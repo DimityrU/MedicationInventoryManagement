@@ -62,21 +62,54 @@ public class MedicationService : IMedicationService
         return response;
     }
 
-    public async Task RemoveMedication(Guid medicationId)
+    public async Task<BaseResponse> RemoveMedication(Guid medicationId)
     {
-        var medication =  await _context.Medications.FirstOrDefaultAsync(m => m.MedicationId == medicationId);
-        if (medication == null) return;
-        _context.Medications.Remove(medication);
-         await _context.SaveChangesAsync();
+        var response = new BaseResponse();
+        try
+        {
+            var medication = await _context.Medications.FirstOrDefaultAsync(m => m.MedicationId == medicationId);
+            if (medication == null)
+            {
+                response.AddError("Error occurred while deleting the medication!");
+                return response;
+            }
+            _context.Medications.Remove(medication);
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception)
+        {
+            response.AddError("Error occurred while removing medication.");
+        }
+
+        return response;
     }
 
-    public async Task ReduceQuantity(Guid medicationId, int newQuantity)
+    public async Task<BaseResponse> ReduceQuantity(Guid medicationId, int newQuantity)
     {
-        var medication = await _context.Medications.FirstOrDefaultAsync(m => m.MedicationId == medicationId);
-        if (medication == null) return;
-        var oldQuantity = medication.Quantity;
-        if(oldQuantity < newQuantity || newQuantity <= 0) return;
-        medication.Quantity = newQuantity;
-        await _context.SaveChangesAsync();
+        var response = new BaseResponse();
+        try
+        {
+            var medication = await _context.Medications.FirstOrDefaultAsync(m => m.MedicationId == medicationId);
+            if (medication == null)
+            {
+                response.AddError("Error occurred while reducing the quantity of the medication!");
+                return response;
+            }
+            var oldQuantity = medication.Quantity;
+            if(oldQuantity < newQuantity || newQuantity <= 0)
+            {
+                response.AddError("Invalid quantity input!");
+                return response;
+            }
+            medication.Quantity = newQuantity;
+            await _context.SaveChangesAsync();
+
+        }
+        catch (Exception )
+        {
+            response.AddError("Error occurred while reducing medication's quantity.");
+        }
+
+        return response;
     }
 }

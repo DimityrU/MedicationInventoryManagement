@@ -9,7 +9,7 @@ public interface IMedicationService
 
     public Task<BaseResponse> AddMedication(MedicationDTO medicationRequest);
 
-    public Task RemoveMedication(Guid medicationId);
+    public Task<BaseResponse> RemoveMedication(Guid medicationId);
 
-    public Task ReduceQuantity(Guid medicationId, int newQuantity);
+    public Task<BaseResponse> ReduceQuantity(Guid medicationId, int newQuantity);
 }

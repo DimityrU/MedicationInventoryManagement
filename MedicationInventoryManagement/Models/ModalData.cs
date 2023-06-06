@@ -2,7 +2,7 @@
 
 public class ModalData
 {
-    public Guid Id { get; set; }
+    public Guid? Id { get; set; }
     public string MessageText { get; set; }
     public string ButtonText { get; set; }
     public string ButtonType { get; set; }
