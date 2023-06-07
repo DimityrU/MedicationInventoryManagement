@@ -32,11 +32,17 @@ namespace MedicationInventoryManagement.Controllers
                 else
                 {
                     var response = await _notificationsService.GetAllNotifications();
-                    var medication = await _medicationService.GetAllMedications();
+                    var medications = await _medicationService.GetAllMedications();
+
+                    foreach (var medication in medications)
+                    {
+                        await _notificationsService.CheckLowQuantityNotification(medication.MedicationId);
+                        await _notificationsService.CheckExpirationDateNotification(medication.MedicationId);
+                    }
 
                     var allMedications = new AllMedicationsViewModel
                     {
-                        Medications = medication,
+                        Medications = medications,
                         Notifications = response.Notifications
                     };
 
@@ -62,6 +68,7 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
+                    await _notificationsService.DeleteNotification(medicationId);
                     var response = await _medicationService.RemoveMedication(medicationId);
                     if (!response.Success)
                     {
@@ -139,7 +146,11 @@ namespace MedicationInventoryManagement.Controllers
                 else
                 {
                     var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
-                    if (!response.Success)
+                    if (response.Success)
+                    {
+                        await _notificationsService.CheckLowQuantityNotification(medicationId);
+                    }
+                    else
                     {
                         TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
                     }

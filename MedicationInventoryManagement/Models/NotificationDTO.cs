@@ -1,4 +1,6 @@
-﻿namespace MedicationInventoryManagement.Models;
+﻿using MedicationInventoryManagement.Entities;
+
+namespace MedicationInventoryManagement.Models;
 
 public class NotificationDTO
 {
@@ -10,8 +12,6 @@ public class NotificationDTO
 
     public DateTime CreatedAt { get; set; }
 
-    //public string Status { get; set; }
-
-    //public MedicationDTO Medication { get; set; }
+    public MedicationDTO? Medication { get; set; }
 
 }

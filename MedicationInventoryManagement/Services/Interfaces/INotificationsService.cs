@@ -8,9 +8,9 @@ public interface INotificationsService
 {
     Task<NotificationResponse> GetAllNotifications();
 
-    // Generate Notification
+    Task<BaseResponse> CheckLowQuantityNotification(Guid? medicationId);
 
-    //Remove Notification
+    public Task<BaseResponse> CheckExpirationDateNotification(Guid? medicationId);
 
-    //MarkAsSeen Notifications
+    public Task DeleteNotification(Guid? medicationId, string type = "all");
 }

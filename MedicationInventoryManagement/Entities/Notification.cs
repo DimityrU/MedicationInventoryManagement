@@ -25,10 +25,6 @@ public partial class Notification
     [Column(TypeName = "datetime")]
     public DateTime CreatedAt { get; set; }
 
-    [Required]
-    [StringLength(20)]
-    public string Status { get; set; }
-
     [ForeignKey("MedicationId")]
     [InverseProperty("Notifications")]
     public virtual Medication Medication { get; set; }
