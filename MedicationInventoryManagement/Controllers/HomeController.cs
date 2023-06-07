@@ -72,7 +72,7 @@ namespace MedicationInventoryManagement.Controllers
                     var response = await _medicationService.RemoveMedication(medicationId);
                     if (!response.Success)
                     {
-                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
                     }
                 }
             }
@@ -146,13 +146,9 @@ namespace MedicationInventoryManagement.Controllers
                 else
                 {
                     var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
-                    if (response.Success)
+                    if (!response.Success)
                     {
-                        await _notificationsService.CheckLowQuantityNotification(medicationId);
-                    }
-                    else
-                    {
-                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
                     }
                 }
             }
