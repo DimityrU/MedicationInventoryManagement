@@ -64,7 +64,7 @@ public class NotificationsService : INotificationsService
                 response.AddError("Cannot check for Quantity!");
             }
 
-            string message = $"{medication.MedicationName} is almost out.";
+            string message = $"{medication.MedicationName} is almost out!";
 
             if (medication.Quantity <= minQuantity)
             {
@@ -99,18 +99,18 @@ public class NotificationsService : INotificationsService
             string expiringMessage = $"{medication.MedicationName} is expiring in less than a month!";
             string expiredMessage = $"{medication.MedicationName} is expired!";
 
-            if (medication.ExpirationDate  < DateTime.Now.Date.AddDays(30))
-            {
-                await GenerateNotification(typeExpiring, expiringMessage, medication);
-            }
-            else if(medication.ExpirationDate <= DateTime.Now.Date)
+            if(medication.ExpirationDate <= DateTime.Now.Date)
             {
                 if (await NotificationExist(medicationId, typeExpiring))
                 {
-                    await DeleteNotification(medicationId, typeExpired);
+                    await DeleteNotification(medicationId, typeExpiring);
                 }
 
-                await GenerateNotification(typeExpiring, expiredMessage, medication);
+                await GenerateNotification(typeExpired, expiredMessage, medication);
+            }
+            else if (medication.ExpirationDate  < DateTime.Now.Date.AddDays(30))
+            {
+                await GenerateNotification(typeExpiring, expiringMessage, medication);
             }
         }
         catch (Exception)
