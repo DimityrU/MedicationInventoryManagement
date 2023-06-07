@@ -20,7 +20,7 @@
 
 <script>
     $('#notificationModal').on('show.bs.modal', function (e) {
-        $.get('@Url.Action("Notification", "Notifications")', function (data) {
+        $.get('@Url.Action("Notifications", "Notifications")', function (data) {
             $('.modal-body').html(data);
         });
     });
