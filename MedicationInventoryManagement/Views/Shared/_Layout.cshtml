@@ -10,7 +10,7 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Medication Management</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
@@ -24,6 +24,12 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Medication</a>
                             </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="#notificationsPanel" data-bs-toggle="collapse">
+                                    <i class="fas fa-bell"></i> Notifications
+                                </a>
+                            </li>
+
                         }
                     </ul>
                     <ul class="navbar-nav flex-grow-1 justify-content-end">
@@ -35,6 +41,7 @@
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="LogIn" asp-action="LogOut">Log Out</a>
                             </li>
+
                         }
                         else
                         {
@@ -48,7 +55,13 @@
         </nav>
     </header>
     <div class="container">
-        <main role="main" class="pb-3">
+        <div class="collapse position-fixed start-0 w-25" id="notificationsPanel">
+            @if (User.Identity.IsAuthenticated && !ViewContext.RouteData.Values["controller"].Equals("LogIn"))
+            {
+                @await Html.PartialAsync("_NotificationPanel.cshtml", Model.Notifications, ViewData)
+            }
+        </div>
+        <main role="main" class="pt-3 pb-3">
             @RenderBody()
         </main>
     </div>
@@ -58,6 +71,7 @@
             &copy; 2023 - Medication Inventory Management
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

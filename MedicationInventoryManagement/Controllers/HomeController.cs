@@ -1,6 +1,4 @@
-﻿using Azure;
-using MedicationInventoryManagement.Entities;
-using MedicationInventoryManagement.Models;
+﻿using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +10,13 @@ namespace MedicationInventoryManagement.Controllers
     {
 
         private readonly IMedicationService _medicationService;
+        private readonly INotificationsService _notificationsService;
 
-        public HomeController(IMedicationService medicationService)
+
+        public HomeController(IMedicationService medicationService, INotificationsService notificationsService)
         {
             _medicationService = medicationService;
+            _notificationsService = notificationsService;
         }
 
         [Authorize]
@@ -30,7 +31,21 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
-                    var allMedications = await _medicationService.GetAllMedications();
+                    var response = await _notificationsService.GetAllNotifications();
+                    var medications = await _medicationService.GetAllMedications();
+
+                    foreach (var medication in medications)
+                    {
+                        await _notificationsService.CheckLowQuantityNotification(medication.MedicationId);
+                        await _notificationsService.CheckExpirationDateNotification(medication.MedicationId);
+                    }
+
+                    var allMedications = new AllMedicationsViewModel
+                    {
+                        Medications = medications,
+                        Notifications = response.Notifications
+                    };
+
                     return View(allMedications);
                 }
             }
@@ -39,7 +54,7 @@ namespace MedicationInventoryManagement.Controllers
                 ModelState.AddModelError("", "No Medication in the inventory");
             }
 
-            return View();
+            return View(new AllMedicationsViewModel());
         }
 
         [Authorize]
@@ -53,10 +68,11 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
+                    await _notificationsService.DeleteNotification(medicationId);
                     var response = await _medicationService.RemoveMedication(medicationId);
                     if (!response.Success)
                     {
-                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
                     }
                 }
             }
@@ -70,11 +86,18 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpGet]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
             try
             {
-                return View();
+                var notificationResponse = await _notificationsService.GetAllNotifications();
+
+                var response = new MedicationViewModel
+                {
+                    Medication = null,
+                    Notifications = notificationResponse.Notifications
+                };
+                return View(response);
             }
             catch (Exception)
             {
@@ -87,15 +110,26 @@ namespace MedicationInventoryManagement.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(MedicationDTO medication)
         {
-            var response = await _medicationService.AddMedication(medication);
+            var notificationResponse = await _notificationsService.GetAllNotifications();
+            var medicationResponse = await _medicationService.AddMedication(medication);
 
-            if (response.Success) return RedirectToAction("Index");
-            foreach (var error in response.Errors)
+            var response = new MedicationViewModel
+            {
+                Medication = medication,
+                Notifications = notificationResponse.Notifications
+            };
+
+            if (notificationResponse.Success && medicationResponse.Success) return RedirectToAction("Index");
+            foreach (var error in medicationResponse.Errors)
+            {
+                ModelState.AddModelError("", error.ErrorMessage);
+            }
+            foreach (var error in notificationResponse.Errors)
             {
                 ModelState.AddModelError("", error.ErrorMessage);
             }
 
-            return View(medication);
+            return View(response);
 
         }
 
@@ -114,7 +148,7 @@ namespace MedicationInventoryManagement.Controllers
                     var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
                     if (!response.Success)
                     {
-                        TempData["ErrorMessage"] = response.Errors[0].ErrorMessage;
+                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
                     }
                 }
             }

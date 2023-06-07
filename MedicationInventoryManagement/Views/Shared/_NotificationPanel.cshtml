@@ -1,0 +1,16 @@
+﻿<div class="card">
+    <div class="card-header">
+        Notifications
+    </div>
+    <div class="card-body overflow-auto scrollable">
+        @if(Model != null)
+        {
+            @foreach (var notification in Model)
+            {
+                <div class="alert alert-info">
+                    <strong>@notification.NotificationType: </strong> @notification.NotificationMessage
+                </div>
+            }
+        }
+    </div>
+</div>  

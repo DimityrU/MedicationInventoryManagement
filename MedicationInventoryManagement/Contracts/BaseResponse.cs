@@ -1,4 +1,4 @@
-﻿namespace MedicationInventoryManagement.Models;
+﻿namespace MedicationInventoryManagement.Contracts;
 
 public class BaseResponse
 {

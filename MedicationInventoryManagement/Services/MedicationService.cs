@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MedicationInventoryManagement.Contracts;
 using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;

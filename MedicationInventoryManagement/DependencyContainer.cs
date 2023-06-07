@@ -12,6 +12,7 @@ public static class DependencyContainer
         // Registered services
         services.AddScoped<ILogInService, LogInService>();
         services.AddScoped<IMedicationService, MedicationService>();
+        services.AddScoped<INotificationsService, NotificationsService>();
 
         return services;
     }
