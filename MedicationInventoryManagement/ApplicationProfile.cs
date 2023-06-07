@@ -10,6 +10,7 @@ namespace MedicationInventoryManagement
         public ApplicationProfile()
         {
             CreateMap<Medication, MedicationDTO>().ReverseMap();
+            CreateMap<Notification, NotificationDTO>().ReverseMap();
         }
     }
 
