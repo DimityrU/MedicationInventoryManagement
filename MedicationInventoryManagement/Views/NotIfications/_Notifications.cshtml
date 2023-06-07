@@ -1,0 +1,8 @@
+﻿@model IEnumerable<MedicationInventoryManagement.Entities.Notification>
+
+@foreach (var notification in Model)
+{
+    <div class="alert alert-info">
+        <strong>@notification.NotificationType: </strong> @notification.NotificationMessage
+    </div>
+}
