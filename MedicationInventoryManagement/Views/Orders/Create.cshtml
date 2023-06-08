@@ -2,6 +2,15 @@
 
 @{
     ViewData["Title"] = "Place Order";
+    var medicationId = Model.Order.Medication[0].Medication.MedicationId;
+    var medicationName = Model.Order.Medication[0].Medication.MedicationName;
+    var selectListItems = Model.Order.Medication.Select(m => new SelectListItem
+    {
+        Value = m.Medication.MedicationId.ToString(),
+        Text = m.Medication.MedicationName,
+        Selected = m.Medication.MedicationId == medicationId && m.Medication.MedicationName == medicationName
+    }).ToList();
+
 }
 
 <div class="row justify-content-center">
@@ -13,13 +22,16 @@
                     <div id="medicationsContainer">
                         <div class="row mb-3">
                             <div class="form-group col-md-6">
-                                <label asp-for="Order.Medication[0].Medication.MedicationName">Medication Name</label>
-                                <input asp-for="Order.Medication[0].Medication.MedicationName" class="form-control" placeholder="Medication Name" required>
+                                <label for="Order.Medication[0].Medication.MedicationName">Medication Name</label>
+                                <select asp-for="Order.Medication[0].Medication.MedicationId" asp-items="selectListItems" class="form-control hide"></select>
+                                <input type="text" name="Order.Medication[0].Medication.MedicationName" class="form-control">
+                                <input type="checkbox" id="sameBatchCheckbox" onclick="toggleMedicationInput(this)">
+                                <label for="sameBatchCheckbox">Same Batch</label>
 
                             </div>
-                            <div class="form-group col-md-6">
-                                <label asp-for="Order.Medication[0].newQuantity">Quantity</label>
-                                <input asp-for="Order.Medication[0].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
+                            <div class="form-group col-md-4">
+                                <label for="Order.Medication[0].newQuantity">Quantity</label>
+                                <input name="Order.Medication[0].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
                             </div>
                         </div>
                     </div>
@@ -36,6 +48,9 @@
 </div>
 
 @section scripts {
+    <script>
+        var selectListItems = @Html.Raw(Json.Serialize(Model.Order.Medication.Select(m => new { Value = m.Medication.MedicationId, Text = m.Medication.MedicationName.ToString() })));
+    </script>
 
     <script src="~/js/order-medication.js" asp-append-version="true"></script>
 }
