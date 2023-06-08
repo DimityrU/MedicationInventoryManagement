@@ -33,7 +33,7 @@
     {
         <tr>
             <td>@medication.MedicationName</td>
-            <td>@medication.ExpirationDate.ToString("dd.MM.yyyy")</td>
+            <td>@medication.ExpirationDate.ToString()</td>
             <td>@medication.Quantity</td>
             <td>
                     <a type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-Remove-@medication.MedicationId">Remove</a>

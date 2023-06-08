@@ -1,0 +1,41 @@
+﻿@model OrderViewModel
+
+@{
+    ViewData["Title"] = "Place Order";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <h2 class="card-title">Place Order</h2>
+                <form id="orderForm" asp-controller="Orders" asp-action="Create" method="post">
+                    <div id="medicationsContainer">
+                        <div class="row mb-3">
+                            <div class="form-group col-md-6">
+                                <label asp-for="Order.Medication[0].Medication.MedicationName">Medication Name</label>
+                                <input asp-for="Order.Medication[0].Medication.MedicationName" class="form-control" placeholder="Medication Name" required>
+
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label asp-for="Order.Medication[0].newQuantity">Quantity</label>
+                                <input asp-for="Order.Medication[0].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <button type="button" class="btn btn-secondary" id="addMedicationLineButton">+</button>
+                    </div>
+                    <div class="form-group mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+
+    <script src="~/js/order-medication.js" asp-append-version="true"></script>
+}

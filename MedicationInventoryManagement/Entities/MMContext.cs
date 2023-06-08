@@ -23,6 +23,8 @@ public partial class MMContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
+    public virtual DbSet<OrderMedication> OrderMedications { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -46,23 +48,6 @@ public partial class MMContext : DbContext
         modelBuilder.Entity<Medication>(entity =>
         {
             entity.Property(e => e.MedicationId).HasDefaultValueSql("(newid())");
-
-            entity.HasMany(d => d.Orders).WithMany(p => p.Medications)
-                .UsingEntity<Dictionary<string, object>>(
-                    "OrderMedication",
-                    r => r.HasOne<Order>().WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_OrderMedication_Orders"),
-                    l => l.HasOne<Medication>().WithMany()
-                        .HasForeignKey("MedicationId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK_OrderMedication_Medications"),
-                    j =>
-                    {
-                        j.HasKey("MedicationId", "OrderId").HasName("PK_OrderMedication_1");
-                        j.ToTable("OrderMedication");
-                    });
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -77,6 +62,19 @@ public partial class MMContext : DbContext
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(e => e.OrderId).HasDefaultValueSql("(newid())");
+        });
+
+        modelBuilder.Entity<OrderMedication>(entity =>
+        {
+            entity.Property(e => e.OrderMedicationId).HasDefaultValueSql("(newid())");
+
+            entity.HasOne(d => d.Medication).WithMany(p => p.OrderMedications)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderMedication_Medications");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderMedications)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderMedication_Orders");
         });
 
         modelBuilder.Entity<User>(entity =>

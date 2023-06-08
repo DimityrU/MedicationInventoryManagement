@@ -1,0 +1,11 @@
+﻿@model OrderMedicationDTO
+
+<div class="mb-3">
+    <label class="form-label">Medication Name</label>
+    @Html.TextBoxFor(m => m.Medication.MedicationName, new { @class = "form-control medicationName" })
+</div>
+
+<div class="mb-3">
+    <label class="form-label">Quantity</label>
+    @Html.TextBoxFor(m => m.newQuantity, new { type = "number", @class = "form-control" })
+</div>

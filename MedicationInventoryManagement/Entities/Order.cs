@@ -13,6 +13,10 @@ public partial class Order
     [Key]
     public Guid OrderId { get; set; }
 
+    [Required]
+    [StringLength(50)]
+    public string OrderName { get; set; }
+
     [Column(TypeName = "datetime")]
     public DateTime OrderDate { get; set; }
 
@@ -20,7 +24,6 @@ public partial class Order
     [StringLength(20)]
     public string Status { get; set; }
 
-    [ForeignKey("OrderId")]
-    [InverseProperty("Orders")]
-    public virtual ICollection<Medication> Medications { get; set; } = new List<Medication>();
+    [InverseProperty("Order")]
+    public virtual ICollection<OrderMedication> OrderMedications { get; set; } = new List<OrderMedication>();
 }
