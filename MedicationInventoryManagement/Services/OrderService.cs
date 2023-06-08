@@ -3,6 +3,7 @@ using MedicationInventoryManagement.Contracts;
 using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedicationInventoryManagement.Services;
 
@@ -30,7 +31,7 @@ public class OrderService : IOrderService
             await _context.SaveChangesAsync();
 
             var orderMedications = new List<OrderMedication>();
-            foreach (var orderMedicationDto in orderDTO.OrderMedication)
+            foreach (var orderMedicationDto in orderDTO.OrderMedications)
             {
                 var orderMedication = await HandleMedication(order, orderMedicationDto);
                 orderMedications.Add(orderMedication);
@@ -50,6 +51,34 @@ public class OrderService : IOrderService
         return response;
     }
 
+    public async Task<AllOrdersResponse> GetAllShippedOrders()
+    {
+        var response = new AllOrdersResponse();
+        try
+        {
+            var orders = await _context.Orders.Where(o => o.Status == "shipped").Include(o =>o.OrderMedications).ToListAsync();
+
+            if (orders == null)
+            {
+                response.AddError("Problem with getting the notification! Please try again!");
+            }
+
+            var ordersResponse = new List<OrderDTO>();
+            foreach (var order in orders)
+            {
+                ordersResponse.Add(_mapper.Map<OrderDTO>(order));
+            }
+
+            response.Orders = ordersResponse;
+        }
+        catch (Exception)
+        {
+            response.AddError("Problem with getting the notification! Please try again!");
+        }
+
+        return response;
+    }
+
     private async Task<OrderMedication> HandleMedication(Order order, OrderMedicationDTO orderMedicationDto)
     {
         var medication = orderMedicationDto.Medication;
@@ -62,12 +91,12 @@ public class OrderService : IOrderService
             _context.Medications.Add(newMedication);
             await _context.SaveChangesAsync();
 
-            return new OrderMedication { OrderId = order.OrderId, MedicationId = newMedication.MedicationId, NewQuantity = orderMedicationDto.newQuantity };
+            return new OrderMedication { OrderId = order.OrderId, MedicationId = newMedication.MedicationId, NewQuantity = orderMedicationDto.NewQuantity };
         }
         else
         {
             var oldMedication = _mapper.Map<Medication>(medication);
-            return new OrderMedication { OrderId = order.OrderId, MedicationId = oldMedication.MedicationId, NewQuantity = orderMedicationDto.newQuantity };
+            return new OrderMedication { OrderId = order.OrderId, MedicationId = oldMedication.MedicationId, NewQuantity = orderMedicationDto.NewQuantity };
         }
     }
 

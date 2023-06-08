@@ -1,5 +1,48 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model MedicationInventoryManagement.Models.ViewModels.AllOrdersViewModel
+
 @{
+    ViewData["Title"] = "Orders";
 }
+
+<div class="position-fixed end-0 me-3">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage)
+        ;
+    }
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+    <a href="@Url.Action("Create", "Orders")" class="btn btn-primary btn-sm mt-1 mb-2">New Order</a>
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <h2 class="card-title">Orders</h2>
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Order</th>
+                        <th>Order Date</th>
+                        <th>Medication Count</th>
+                        <th>Options</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var order in Model.Orders)
+                    {
+                        <tr>
+                            <td>@order.OrderName</td>
+                            <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("dd MMM yyyy") : "")</td>
+                            <td>@order.OrderMedications.Count</td>
+                            <td>
+                                <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" class="btn btn-success btn-sm">Details</a>
+                                <a href="@Url.Action("Cancel", "Orders", new { id = order.OrderId })" class="btn btn-danger btn-sm">Cancel</a>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

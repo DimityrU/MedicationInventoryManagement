@@ -2,12 +2,12 @@
 
 public class OrderMedicationDTO
 {
-    public Guid? OrderMedicationID { get; set; }
+    public Guid? OrderMedicationId { get; set; }
 
     public MedicationDTO Medication { get; set; }
 
     public OrderDTO Order { get; set; }
 
-    public int newQuantity { get; set; }
+    public int NewQuantity { get; set; }
 
 }

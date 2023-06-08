@@ -1,17 +1,25 @@
-﻿@model OrderViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model MedicationInventoryManagement.Models.ViewModels.OrderViewModel
 
 @{
     ViewData["Title"] = "Place Order";
-    var medicationId = Model.Order.OrderMedication[0].Medication.MedicationId;
-    var medicationName = Model.Order.OrderMedication[0].Medication.MedicationName;
-    var selectListItems = Model.Order.OrderMedication.Select(m => new SelectListItem
+    var medicationId = Model.Order.OrderMedications[0].Medication.MedicationId;
+    var medicationName = Model.Order.OrderMedications[0].Medication.MedicationName;
+    var selectListItems = Model.Order.OrderMedications.Select(m => new SelectListItem
     {
         Value = m.Medication.MedicationId.ToString(),
         Text = m.Medication.MedicationName,
         Selected = m.Medication.MedicationId == medicationId && m.Medication.MedicationName == medicationName
     }).ToList();
-
 }
+
+<div class="position-fixed end-0 me-3">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage)
+        ;
+    }
+</div>
 
 <div class="row justify-content-center">
     <div class="col-lg-5">
@@ -23,7 +31,7 @@
                         <div class="row mb-3">
                             <div class="form-group col-md-6">
                                 <label for="Order.OrderMedication[0].Medication.MedicationName">Medication Name</label>
-                                <select asp-for="Order.OrderMedication[0].Medication.MedicationId" asp-items="selectListItems" class="form-control hide"></select>
+                                <select asp-for="Order.OrderMedications[0].Medication.MedicationId" asp-items="selectListItems" class="form-control hide"></select>
                                 <input type="text" name="Order.OrderMedication[0].Medication.MedicationName" class="form-control">
                                 <input type="checkbox" id="sameBatchCheckbox" onclick="toggleMedicationInput(this)">
                                 <label for="sameBatchCheckbox">Same Batch</label>
@@ -49,7 +57,7 @@
 
 @section scripts {
     <script>
-        var selectListItems = @Html.Raw(Json.Serialize(Model.Order.OrderMedication.Select(m => new { Value = m.Medication.MedicationId, Text = m.Medication.MedicationName.ToString() })));
+        var selectListItems = @Html.Raw(Json.Serialize(Model.Order.OrderMedications.Select(m => new { Value = m.Medication.MedicationId, Text = m.Medication.MedicationName.ToString() })));
     </script>
 
     <script src="~/js/order-medication.js" asp-append-version="true"></script>

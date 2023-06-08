@@ -12,6 +12,7 @@ namespace MedicationInventoryManagement
             CreateMap<Medication, MedicationDTO>().ReverseMap();
             CreateMap<Notification, NotificationDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
+            CreateMap<OrderMedication, OrderMedicationDTO>().ReverseMap();
         }
     }
 

@@ -1,4 +1,4 @@
-﻿namespace MedicationInventoryManagement.Models;
+﻿namespace MedicationInventoryManagement.Models.ViewModels;
 
 public class AllMedicationsViewModel
 {

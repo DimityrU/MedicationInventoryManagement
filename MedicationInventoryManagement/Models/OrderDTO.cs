@@ -10,5 +10,5 @@ public class OrderDTO
 
     public string? Status { get; set; }
 
-    public List<OrderMedicationDTO>  OrderMedication { get; set; }
+    public List<OrderMedicationDTO>  OrderMedications { get; set; }
 }

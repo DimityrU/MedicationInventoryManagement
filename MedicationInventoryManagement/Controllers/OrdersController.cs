@@ -1,4 +1,5 @@
 ﻿using MedicationInventoryManagement.Models;
+using MedicationInventoryManagement.Models.ViewModels;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -30,14 +31,14 @@ namespace MedicationInventoryManagement.Controllers
                 OrderName = "",
                 OrderDate = null,
                 Status = "",
-                OrderMedication = medications.Select(m => new OrderMedicationDTO
+                OrderMedications = medications.Select(m => new OrderMedicationDTO
                 {
                     Medication = new MedicationDTO
                     {
                         MedicationId = m.MedicationId,
                         MedicationName = m.MedicationName
                     },
-                    newQuantity = 0
+                    NewQuantity = 0
                 }).ToList()
             };
 
@@ -63,7 +64,19 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
-                    var model = await CreateOrderViewModel();
+                    var response = await _orderService.GetAllShippedOrders();
+                    var notificationResponse = await _notificationsService.GetAllNotifications();
+
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+                    }
+
+                    var model = new AllOrdersViewModel
+                    {
+                        Orders = response.Orders,
+                        Notifications = notificationResponse.Notifications
+                    };
                     return View(model);
                 }
             }
@@ -72,7 +85,7 @@ namespace MedicationInventoryManagement.Controllers
                 ModelState.AddModelError("", "No Medication in the inventory");
             }
 
-            return View(new AllMedicationsViewModel());
+            return View(new AllOrdersViewModel());
         }
 
         [Authorize]
@@ -103,6 +116,16 @@ namespace MedicationInventoryManagement.Controllers
             var model = await CreateOrderViewModel();
             return View(model);
 
+        }
+
+        public IActionResult Details(Guid? id)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IActionResult Cancel(Guid? id)
+        {
+            throw new NotImplementedException();
         }
     }
 }
