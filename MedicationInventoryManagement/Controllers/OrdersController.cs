@@ -1,23 +1,57 @@
 ﻿using MedicationInventoryManagement.Models;
-using MedicationInventoryManagement.Services;
 using MedicationInventoryManagement.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedicationInventoryManagement.Controllers
 {
+    [Authorize]
     public class OrdersController : Controller
     {
+        private readonly IOrderService _orderService;
         private readonly INotificationsService _notificationsService;
         private readonly IMedicationService _medicationService;
 
-
-
-        public OrdersController(IMedicationService medicationService, INotificationsService notificationsService)
+        public OrdersController(IOrderService orderService, IMedicationService medicationService,
+            INotificationsService notificationsService)
         {
+            _orderService = orderService;
             _medicationService = medicationService;
             _notificationsService = notificationsService;
         }
+        private async Task<OrderViewModel> CreateOrderViewModel()
+        {
+            var notificationResponse = await _notificationsService.GetAllNotifications();
+            var medications = await _medicationService.GetAllMedications();
 
+            var order = new OrderDTO
+            {
+                OrderId = null,
+                OrderName = "",
+                OrderDate = null,
+                Status = "",
+                OrderMedication = medications.Select(m => new OrderMedicationDTO
+                {
+                    Medication = new MedicationDTO
+                    {
+                        MedicationId = m.MedicationId,
+                        MedicationName = m.MedicationName
+                    },
+                    newQuantity = 0
+                }).ToList()
+            };
+
+            var response = new OrderViewModel
+            {
+                Order = order,
+                Notifications = notificationResponse.Notifications
+            };
+
+            return response;
+        }
+
+        [Authorize]
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             try
@@ -29,16 +63,8 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
-                    var response = await _notificationsService.GetAllNotifications();
-
-
-                    var allMedications = new AllMedicationsViewModel
-                    {
-                        Medications = null,
-                        Notifications = response.Notifications
-                    };
-
-                    return View(allMedications);
+                    var model = await CreateOrderViewModel();
+                    return View(model);
                 }
             }
             catch (Exception)
@@ -49,29 +75,14 @@ namespace MedicationInventoryManagement.Controllers
             return View(new AllMedicationsViewModel());
         }
 
+        [Authorize]
         [HttpGet]
         public async Task<IActionResult> Create()
         {
             try
             {
-                var notificationResponse = await _notificationsService.GetAllNotifications();
-                var medications = await _medicationService.GetAllMedications();
-
-                var order = new OrderDTO
-                {
-                    OrderId = null,
-                    OrderName = "",
-                    OrderDate = null,
-                    Status = "",
-                    Medication = medications.Select(m => new OrderMedicationDTO { Medication = new MedicationDTO { MedicationId = m.MedicationId, MedicationName = m.MedicationName }, newQuantity = 0 }).ToList()
-                };
-
-                var response = new OrderViewModel
-                {
-                    Order = order,
-                    Notifications = notificationResponse.Notifications
-                };
-                return View(response);
+                var model = await CreateOrderViewModel();
+                return View(model);
             }
             catch (Exception)
             {
@@ -80,12 +91,17 @@ namespace MedicationInventoryManagement.Controllers
             }
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> Create(OrderDTO order)
         {
+            var response = await _orderService.PlaceOrder(order);
 
+            if (response.Success) return RedirectToAction("Index");
 
-            return RedirectToAction("Index");
+            TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+            var model = await CreateOrderViewModel();
+            return View(model);
 
         }
     }

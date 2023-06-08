@@ -13,6 +13,7 @@ public static class DependencyContainer
         services.AddScoped<ILogInService, LogInService>();
         services.AddScoped<IMedicationService, MedicationService>();
         services.AddScoped<INotificationsService, NotificationsService>();
+        services.AddScoped<IOrderService, OrderService>();
 
         return services;
     }
