@@ -13,14 +13,14 @@ public partial class Order
     [Key]
     public Guid OrderId { get; set; }
 
-    public Guid MedicationId { get; set; }
-
     [Column(TypeName = "datetime")]
     public DateTime OrderDate { get; set; }
 
-    public int Quantity { get; set; }
+    [Required]
+    [StringLength(20)]
+    public string Status { get; set; }
 
-    [ForeignKey("MedicationId")]
+    [ForeignKey("OrderId")]
     [InverseProperty("Orders")]
-    public virtual Medication Medication { get; set; }
+    public virtual ICollection<Medication> Medications { get; set; } = new List<Medication>();
 }

@@ -46,6 +46,23 @@ public partial class MMContext : DbContext
         modelBuilder.Entity<Medication>(entity =>
         {
             entity.Property(e => e.MedicationId).HasDefaultValueSql("(newid())");
+
+            entity.HasMany(d => d.Orders).WithMany(p => p.Medications)
+                .UsingEntity<Dictionary<string, object>>(
+                    "OrderMedication",
+                    r => r.HasOne<Order>().WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_OrderMedication_Orders"),
+                    l => l.HasOne<Medication>().WithMany()
+                        .HasForeignKey("MedicationId")
+                        .OnDelete(DeleteBehavior.ClientSetNull)
+                        .HasConstraintName("FK_OrderMedication_Medications"),
+                    j =>
+                    {
+                        j.HasKey("MedicationId", "OrderId").HasName("PK_OrderMedication_1");
+                        j.ToTable("OrderMedication");
+                    });
         });
 
         modelBuilder.Entity<Notification>(entity =>
@@ -60,10 +77,6 @@ public partial class MMContext : DbContext
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(e => e.OrderId).HasDefaultValueSql("(newid())");
-
-            entity.HasOne(d => d.Medication).WithMany(p => p.Orders)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_Medications");
         });
 
         modelBuilder.Entity<User>(entity =>

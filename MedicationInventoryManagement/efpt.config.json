@@ -23,6 +23,10 @@
          "ObjectType": 0
       },
       {
+         "Name": "[dbo].[OrderMedication]",
+         "ObjectType": 0
+      },
+      {
          "Name": "[dbo].[Orders]",
          "ObjectType": 0
       },

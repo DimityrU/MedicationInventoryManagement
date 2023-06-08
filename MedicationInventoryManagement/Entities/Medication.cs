@@ -20,11 +20,12 @@ public partial class Medication
     public int Quantity { get; set; }
 
     [Column(TypeName = "date")]
-    public DateTime ExpirationDate { get; set; }
+    public DateTime? ExpirationDate { get; set; }
 
     [InverseProperty("Medication")]
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
-    [InverseProperty("Medication")]
+    [ForeignKey("MedicationId")]
+    [InverseProperty("Medications")]
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }
