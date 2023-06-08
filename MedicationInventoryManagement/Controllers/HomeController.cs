@@ -12,12 +12,14 @@ namespace MedicationInventoryManagement.Controllers
 
         private readonly IMedicationService _medicationService;
         private readonly INotificationsService _notificationsService;
+        private readonly IOrderService _orderService;
 
 
-        public HomeController(IMedicationService medicationService, INotificationsService notificationsService)
+        public HomeController(IMedicationService medicationService, INotificationsService notificationsService, IOrderService orderService)
         {
             _medicationService = medicationService;
             _notificationsService = notificationsService;
+            _orderService = orderService;
         }
 
         [Authorize]
@@ -30,25 +32,24 @@ namespace MedicationInventoryManagement.Controllers
                 {
                     ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occurred! Please try again!");
                 }
-                else
+
+                var response = await _notificationsService.GetAllNotifications();
+                var medications = await _medicationService.GetAllMedications();
+
+                foreach (var medication in medications)
                 {
-                    var response = await _notificationsService.GetAllNotifications();
-                    var medications = await _medicationService.GetAllMedications();
-
-                    foreach (var medication in medications)
-                    {
-                        await _notificationsService.CheckLowQuantityNotification(medication.MedicationId);
-                        await _notificationsService.CheckExpirationDateNotification(medication.MedicationId);
-                    }
-
-                    var allMedications = new AllMedicationsViewModel
-                    {
-                        Medications = medications,
-                        Notifications = response.Notifications
-                    };
-
-                    return View(allMedications);
+                    await _notificationsService.CheckLowQuantityNotification(medication.MedicationId);
+                    await _notificationsService.CheckExpirationDateNotification(medication.MedicationId);
                 }
+
+                var allMedications = new AllMedicationsViewModel
+                {
+                    Medications = medications,
+                    Notifications = response.Notifications
+                };
+
+                return View(allMedications);
+                
             }
             catch (Exception)
             {
@@ -69,11 +70,19 @@ namespace MedicationInventoryManagement.Controllers
                 }
                 else
                 {
-                    await _notificationsService.DeleteNotification(medicationId);
-                    var response = await _medicationService.RemoveMedication(medicationId);
-                    if (!response.Success)
+                    var ordered = _orderService.CheckOrder(medicationId);
+                    if (!ordered)
                     {
-                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+                        await _notificationsService.DeleteNotification(medicationId);
+                        var response = await _medicationService.RemoveMedication(medicationId);
+                        if (!response.Success)
+                        {
+                            TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+                        }
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "There is an order for this medication, you cannot remove it!";
                     }
                 }
             }
