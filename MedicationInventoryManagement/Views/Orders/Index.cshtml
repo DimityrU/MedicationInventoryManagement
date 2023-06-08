@@ -4,7 +4,7 @@
     ViewData["Title"] = "Orders";
 }
 
-<div class="position-fixed end-0 me-3">
+<div class="position-fixed end-0 me-1 w-25">
     @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
     {
         @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage)

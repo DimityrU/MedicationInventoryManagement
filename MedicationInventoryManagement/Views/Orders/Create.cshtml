@@ -32,7 +32,7 @@
                             <div class="form-group col-md-6">
                                 <label for="Order.OrderMedication[0].Medication.MedicationName">Medication Name</label>
                                 <select asp-for="Order.OrderMedications[0].Medication.MedicationId" asp-items="selectListItems" class="form-control hide"></select>
-                                <input type="text" name="Order.OrderMedication[0].Medication.MedicationName" class="form-control">
+                                <input type="text" name="Order.OrderMedication[0].Medication.MedicationName" class="form-control" placeholder="Name">
                                 <input type="checkbox" id="sameBatchCheckbox" onclick="toggleMedicationInput(this)">
                                 <label for="sameBatchCheckbox">Same Batch</label>
 
@@ -44,7 +44,7 @@
                         </div>
                     </div>
                     <div class="form-group mb-4">
-                        <button type="button" class="btn btn-secondary" id="addMedicationLineButton">+</button>
+                        <button type="button" class="btn btn-secondary" id="addMedicationLineButton"><i class="fas fa-plus"></i> Medication</button>
                     </div>
                     <div class="form-group mb-4">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>

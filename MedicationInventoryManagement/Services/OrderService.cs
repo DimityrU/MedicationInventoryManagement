@@ -78,6 +78,11 @@ public class OrderService : IOrderService
 
         return response;
     }
+    
+    public bool CheckOrder(Guid id)
+    {
+        return _context.OrderMedications.Any(o => o.MedicationId == id);
+    }
 
     private async Task<OrderMedication> HandleMedication(Order order, OrderMedicationDTO orderMedicationDto)
     {

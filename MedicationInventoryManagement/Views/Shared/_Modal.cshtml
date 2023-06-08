@@ -20,14 +20,14 @@
                         <input type="hidden" name="medicationId" value="@Model.Id" />}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
                     @if (Model.Quantity != null)
                     {
-                     <input type="submit" value="@Model.ButtonText" class="btn btn-@Model.ButtonType" />
+                        <input type="submit" value="@Model.ButtonText" class="btn btn-sm btn-@Model.ButtonType" />
                     }
                     else
                     {
-                        <a type="button" class="btn btn-@Model.ButtonType" asp-controller="@Model.ControllerName" asp-action="@Model.ActionName" asp-route-medicationId="@Model.Id">@Model.ButtonText</a>
+                        <a type="button" class="btn btn-@Model.ButtonType btn-sm" asp-controller="@Model.ControllerName" asp-action="@Model.ActionName" asp-route-medicationId="@Model.Id">@Model.ButtonText</a>
                     }
                 </div>
             }
