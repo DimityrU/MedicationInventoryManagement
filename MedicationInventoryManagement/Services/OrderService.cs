@@ -120,7 +120,9 @@ public class OrderService : IOrderService
                 response.AddError("Error occurred while canceling the order!");
                 return response;
             }
-            _context.Orders.Remove(order);
+
+            order.Status = "cancel";
+            _context.Orders.Update(order);
             await _context.SaveChangesAsync();
 
             await transaction.CommitAsync();
