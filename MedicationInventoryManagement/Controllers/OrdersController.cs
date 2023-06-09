@@ -124,9 +124,29 @@ namespace MedicationInventoryManagement.Controllers
             return View();
         }
 
-        public IActionResult Cancel(Guid id)
+        public async Task<IActionResult> Cancel(Guid id)
         {
-            throw new NotImplementedException();
+            try
+            {
+                if (id == Guid.Empty)
+                {
+                    TempData["ErrorMessage"] = "System error, please try again later.";
+                }
+                else
+                { 
+                    var response = await _orderService.CancelOrder(id);
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Error occurred while canceling the order.";
+            }
+
+            return RedirectToAction("Index");
         }
     }
 }

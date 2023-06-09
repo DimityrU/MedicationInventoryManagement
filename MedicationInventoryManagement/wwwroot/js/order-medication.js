@@ -6,13 +6,13 @@
     var newLineHTML =
         `<div class="row mb-3">
             <div class="form-group col-md-6">
-                <input type="text" name="Order.OrderMedication[${newLineIndex}].Medication.MedicationName" placeholder="Name" class="form-control">
-                <select id="select${newLineIndex}" name="Order.OrderMedication[${newLineIndex}].Medication.MedicationId" class="form-control hide" required></select>
+                <input type="text" name="Order.OrderMedications[${newLineIndex}].Medication.MedicationName" placeholder="Name" class="form-control">
+                <select id="select${newLineIndex}" name="Order.OrderMedications[${newLineIndex}].Medication.MedicationId" class="form-control hide" required></select>
                 <input type="checkbox" id="sameBatchCheckbox${newLineIndex}" onclick="toggleMedicationInput(this)">
                 <label for="sameBatchCheckbox${newLineIndex}">Same Batch</label>
             </div>
             <div class="form-group col-md-4">
-                <input name="Order.OrderMedication[${newLineIndex}].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
+                <input name="Order.OrderMedications[${newLineIndex}].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
             </div>
             <div class="form-group col-md-1">
                 <button type="button" class="btn btn-danger" onclick="removeMedicationLine(this)"><i class="fas fa-ban"></i></button>

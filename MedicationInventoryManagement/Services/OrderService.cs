@@ -84,6 +84,57 @@ public class OrderService : IOrderService
         return _context.OrderMedications.Any(o => o.MedicationId == id);
     }
 
+    public async Task<BaseResponse> CancelOrder(Guid id)
+    {
+        var response = new BaseResponse();
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+        try
+        {
+            var orderMedications = _context.OrderMedications.Include(o => o.Medication).Where(o => o.OrderId == id).ToList();
+
+            if (orderMedications == null)
+            {
+                await transaction.RollbackAsync();
+                response.AddError("Error occurred while canceling the order!");
+                return response;
+
+            }
+            _context.OrderMedications.RemoveRange(orderMedications);
+            await _context.SaveChangesAsync();
+
+            var medications = new List<Medication>();
+            foreach (var medication in orderMedications)
+            {
+                if (medication.Medication.ExpirationDate == null && medication.Medication.Quantity == null)
+                {
+                    medications.Add(medication.Medication);
+                }
+            }
+
+            _context.Medications.RemoveRange(medications);
+            await _context.SaveChangesAsync();
+
+            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+            if (order == null)
+            {
+                response.AddError("Error occurred while canceling the order!");
+                return response;
+            }
+            _context.Orders.Remove(order);
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
+
+        }
+        catch (Exception)
+        {
+            await transaction.RollbackAsync();
+            response.AddError("Error occurred while canceling the order.");
+        }
+
+        return response;
+    }
+
     private async Task<OrderMedication> HandleMedication(Order order, OrderMedicationDTO orderMedicationDto)
     {
         var medication = orderMedicationDto.Medication;

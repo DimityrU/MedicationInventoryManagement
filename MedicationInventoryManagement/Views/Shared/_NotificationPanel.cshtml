@@ -3,7 +3,7 @@
         Notifications
     </div>
     <div class="card-body overflow-auto scrollable">
-        @if(Model != null)
+        @if(Model != null && Model.Count > 0)
         {
             @foreach (var notification in Model)
             {
@@ -11,6 +11,12 @@
                     <strong>@notification.NotificationType: </strong> @notification.NotificationMessage
                 </div>
             }
+        }
+        else
+        {
+            <div class="text-center mb-0">
+                No new notifications
+            </div>
         }
     </div>
 </div>  

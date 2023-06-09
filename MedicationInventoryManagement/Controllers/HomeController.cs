@@ -145,17 +145,17 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Reduce(Guid medicationId, int newQuantity)
+        public async Task<IActionResult> Reduce(Guid id, int newQuantity)
         {
             try
             {
-                if (medicationId == Guid.Empty)
+                if (id == Guid.Empty)
                 {
                     TempData["ErrorMessage"] = "System error, please try again later.";
                 }
                 else
                 {
-                    var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
+                    var response = await _medicationService.ReduceQuantity(id, newQuantity);
                     if (!response.Success)
                     {
                         TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;

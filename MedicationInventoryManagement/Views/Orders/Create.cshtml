@@ -30,16 +30,16 @@
                     <div id="medicationsContainer">
                         <div class="row mb-3">
                             <div class="form-group col-md-6">
-                                <label for="Order.OrderMedication[0].Medication.MedicationName">Medication Name</label>
+                                <label for="Order.OrderMedications[0].Medication.MedicationName">Medication Name</label>
                                 <select asp-for="Order.OrderMedications[0].Medication.MedicationId" asp-items="selectListItems" class="form-control hide"></select>
-                                <input type="text" name="Order.OrderMedication[0].Medication.MedicationName" class="form-control" placeholder="Name">
+                                <input type="text" name="Order.OrderMedications[0].Medication.MedicationName" class="form-control" placeholder="Name">
                                 <input type="checkbox" id="sameBatchCheckbox" onclick="toggleMedicationInput(this)">
                                 <label for="sameBatchCheckbox">Same Batch</label>
 
                             </div>
                             <div class="form-group col-md-4">
-                                <label for="Order.OrderMedication[0].newQuantity">Quantity</label>
-                                <input name="Order.OrderMedication[0].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
+                                <label for="Order.OrderMedications[0].newQuantity">Quantity</label>
+                                <input name="Order.OrderMedications[0].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
                             </div>
                         </div>
                     </div>

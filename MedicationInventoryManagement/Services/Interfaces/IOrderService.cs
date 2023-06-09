@@ -10,4 +10,6 @@ public interface IOrderService
     public Task<AllOrdersResponse> GetAllShippedOrders();
 
     public bool CheckOrder(Guid id);
+
+    public Task<BaseResponse> CancelOrder(Guid id);
 }

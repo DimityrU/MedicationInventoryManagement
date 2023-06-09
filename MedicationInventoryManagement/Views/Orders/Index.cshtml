@@ -14,47 +14,61 @@
 
 <div class="row justify-content-center">
     <div class="col-lg-7">
-    <a href="@Url.Action("Create", "Orders")" class="btn btn-primary btn-sm mt-1 mb-2">New Order</a>
-        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
-            <div class="card-body">
-                <h2 class="card-title">Orders</h2>
-                <table class="table">
-                    <thead>
-                    <tr>
-                        <th>Order</th>
-                        <th>Order Date</th>
-                        <th>Medication Count</th>
-                        <th>Options</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    @foreach (var order in Model.Orders)
-                    {
-                        <tr>
-                            <td>@order.OrderName</td>
-                            <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("dd MMM yyyy") : "")</td>
-                            <td>@order.OrderMedications.Count</td>
-                            <td>
-                                <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" class="btn btn-success btn-sm">Details</a>
-                                <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Cancel-@order.OrderId">Cancel</a>
-                                @{
-                                    var cancelOrder = new ModalData()
-                                    {
-                                        Id = order.OrderId,
-                                        MessageText = "Are you sure you want to cancel this order?",
-                                        ButtonText = "Cancel",
-                                        ButtonType = "danger",
-                                        ControllerName = "Orders",
-                                        ActionName = "Cancel"
-                                    };
-                                }
-                            </td>
-                        </tr>
-                        @await Html.PartialAsync("_Modal", cancelOrder)
-                    }
-                    </tbody>
-                </table>
-            </div>
+        <div class="text-center mt-1 mb-4">
+            <a href="@Url.Action("Create", "Orders")" class="btn btn-primary btn-sm">New Order</a>
         </div>
+        @if (Model.Orders != null && Model.Orders.Count() > 0)
+        {
+            <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+                <div class="card-body">
+                    <h2 class="card-title">Orders</h2>
+
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Order</th>
+                            <th>Order Date</th>
+                            <th>Medication Count</th>
+                            <th>Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var order in Model.Orders)
+                        {
+                            <tr>
+                                <td>@order.OrderName</td>
+                                <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("dd MMM yyyy") : "")</td>
+                                <td>@order.OrderMedications.Count</td>
+                                <td>
+                                    <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" class="btn btn-success btn-sm">Details</a>
+                                    <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Cancel-@order.OrderId">Cancel</a>
+                                    @{
+                                        var cancelOrder = new ModalData()
+                                        {
+                                            Id = order.OrderId,
+                                            MessageText = "Are you sure you want to cancel this order?",
+                                            ButtonText = "Cancel",
+                                            ButtonType = "danger",
+                                            ControllerName = "Orders",
+                                            ActionName = "Cancel"
+                                        };
+                                    }
+                                </td>
+                            </tr>
+                            @await Html.PartialAsync("_Modal", cancelOrder)
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="position-fixed mt-5 start-50 translate-middle">
+                <div class="alert alert-warning" role="alert">
+                    <h3>No shipped orders</h3>
+                </div>
+            </div>
+        }
     </div>
 </div>
