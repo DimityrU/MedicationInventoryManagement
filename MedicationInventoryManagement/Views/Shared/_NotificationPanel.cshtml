@@ -7,7 +7,12 @@
         {
             @foreach (var notification in Model)
             {
-                <div class="alert alert-info">
+                var color = "warning";
+                if (notification.NotificationType == "expired")
+                {
+                    color = "danger";
+                }
+                <div class="alert alert-@color">
                     <strong>@notification.NotificationType: </strong> @notification.NotificationMessage
                 </div>
             }

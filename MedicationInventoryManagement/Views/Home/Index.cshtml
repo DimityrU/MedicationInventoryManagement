@@ -22,7 +22,7 @@
             <div class="card shadow-lg p-3 mb-5 bg-white rounded">
                 <div class="card-body">
                     <h2 class="card-title">Medication Inventory</h2>
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                         <tr>
                             <th>Medication Name</th>
@@ -34,7 +34,16 @@
                         <tbody>
                         @foreach (var medication in Model.Medications)
                         {
-                            <tr>
+                            var color = string.Empty;
+                            if (medication.ExpirationDate < DateTime.Now)
+                            {
+                                color = "danger";
+                            }
+                            else if (medication.Quantity <= 10 || medication.ExpirationDate < DateTime.Now.Date.AddMonths(1))
+                            {
+                                color = "warning";
+                            }
+                            <tr class="table-@color">
                                 <td>@medication.MedicationName</td>
                                 <td>@(medication.ExpirationDate.HasValue ? medication.ExpirationDate.Value.ToString("dd MMM yyyy") : "")</td>
                                 <td>@medication.Quantity</td>
