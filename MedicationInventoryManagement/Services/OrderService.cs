@@ -137,6 +137,26 @@ public class OrderService : IOrderService
         return response;
     }
 
+    public async Task<OrderDTO> GetOrder(Guid id)
+    {
+        var response = new OrderDTO();
+        try
+        {
+            var order = await _context.Orders.Where(o => o.OrderId == id)
+                .Include(o => o.OrderMedications)
+                .ThenInclude(o => o.Medication)
+                .FirstOrDefaultAsync();
+
+            response =_mapper.Map<OrderDTO>(order);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
+        return response;
+    }
+
     private async Task<OrderMedication> HandleMedication(Order order, OrderMedicationDTO orderMedicationDto)
     {
         var medication = orderMedicationDto.Medication;

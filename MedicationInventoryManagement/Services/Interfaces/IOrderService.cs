@@ -12,4 +12,6 @@ public interface IOrderService
     public bool CheckOrder(Guid id);
 
     public Task<BaseResponse> CancelOrder(Guid id);
+
+    public Task<OrderDTO> GetOrder(Guid id);
 }

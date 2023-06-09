@@ -119,9 +119,20 @@ namespace MedicationInventoryManagement.Controllers
         }
 
         [HttpGet]
-        public IActionResult Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            return View();
+            var model = new OrderViewModel();
+            try
+            {
+                model = await CreateOrderViewModel();
+                var order = await _orderService.GetOrder(id);
+                model.Order = order;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+            return View(model);
         }
 
         public async Task<IActionResult> Cancel(Guid id)

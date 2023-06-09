@@ -5,35 +5,46 @@
 }
 
 <div class="row justify-content-center">
-    <div class="col-lg-6">
+    <div class="col-lg-7">
         <div class="card shadow-lg p-3 mb-5 bg-white rounded">
             <div class="card-body">
                 <h2 class="card-title">Order Details</h2>
                 <div>
-                    <h4>Order Name: @Model.Order.OrderName</h4>
-                    <h4>Order Date: @Model.Order.OrderDate?.ToString("dd MMM yyyy")</h4>
-                    <h4>Status: @Model.Order.Status</h4>
+                    <p><strong>Order Name:</strong> @Model.Order.OrderName</p>
+                    <p><strong>Order Date:</strong> @Model.Order.OrderDate?.ToString("dd MMM yyyy")</p>
+                    <p><strong>Status:</strong> @Model.Order.Status</p>
                 </div>
                 <hr />
                 <h3>Medications</h3>
                 <div>
                     @foreach (var medication in Model.Order.OrderMedications)
                     {
-                        <div class="mb-3">
-                            <label>Medication Name: @medication.Medication.MedicationName</label>
-                            <br />
-                            <label>Quantity: @medication.NewQuantity</label>
-                            <br />
-                            @if (medication.Medication.ExpirationDate.HasValue)
-                            {
-                                <input type="date" value="@medication.Medication.ExpirationDate?.ToString("dd MMM yyyy")" class="form-control" readonly />
-                            }
-                            else
-                            {
-                                <input type="date" class="form-control"/>
-                            }
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="medicationName">Medication Name:</label>
+                                <input id="medicationName" value="@medication.Medication.MedicationName" class="form-control" readonly />
+                            </div>
+                            <div class="col">
+                                <label for="quantity">Quantity:</label>
+                                <input id="quantity" value="@medication.NewQuantity" class="form-control" readonly />
+                            </div>
+                            <div class="col">
+                                @if (medication.Medication.ExpirationDate.HasValue)
+                                {
+                                    <label for="expirationDate">Expiration Date:</label>
+                                    <input id="expirationDate" type="date" value="@medication.Medication.ExpirationDate.Value.Date.ToString("yyyy-MM-dd")" class="form-control" readonly />
+                                }
+                                else
+                                {
+                                    <label for="expirationDate">Expiration Date:</label>
+                                    <input id="expirationDate" type="date" class="form-control" required/>
+                                }
+                            </div>
                         </div>
                     }
+                </div>
+                <div class="d-flex justify-content-end">
+                    <button type="button" class="btn btn-primary btn-sm">Mark as Arrived</button>
                 </div>
             </div>
         </div>
