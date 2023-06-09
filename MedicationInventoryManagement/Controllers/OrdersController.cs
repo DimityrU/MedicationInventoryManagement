@@ -118,12 +118,13 @@ namespace MedicationInventoryManagement.Controllers
 
         }
 
+        [HttpGet]
         public IActionResult Details(Guid? id)
         {
-            throw new NotImplementedException();
+            return View();
         }
 
-        public IActionResult Cancel(Guid? id)
+        public IActionResult Cancel(Guid id)
         {
             throw new NotImplementedException();
         }

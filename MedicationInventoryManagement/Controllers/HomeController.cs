@@ -60,21 +60,21 @@ namespace MedicationInventoryManagement.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Delete(Guid medicationId)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                if (medicationId == Guid.Empty)
+                if (id == Guid.Empty)
                 {
                     TempData["ErrorMessage"] = "System error, please try again later.";
                 }
                 else
                 {
-                    var ordered = _orderService.CheckOrder(medicationId);
+                    var ordered = _orderService.CheckOrder(id);
                     if (!ordered)
                     {
-                        await _notificationsService.DeleteNotification(medicationId);
-                        var response = await _medicationService.RemoveMedication(medicationId);
+                        await _notificationsService.DeleteNotification(id);
+                        var response = await _medicationService.RemoveMedication(id);
                         if (!response.Success)
                         {
                             TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;

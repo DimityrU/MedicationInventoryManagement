@@ -36,9 +36,21 @@
                             <td>@order.OrderMedications.Count</td>
                             <td>
                                 <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" class="btn btn-success btn-sm">Details</a>
-                                <a href="@Url.Action("Cancel", "Orders", new { id = order.OrderId })" class="btn btn-danger btn-sm">Cancel</a>
+                                <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Cancel-@order.OrderId">Cancel</a>
+                                @{
+                                    var cancelOrder = new ModalData()
+                                    {
+                                        Id = order.OrderId,
+                                        MessageText = "Are you sure you want to cancel this order?",
+                                        ButtonText = "Cancel",
+                                        ButtonType = "danger",
+                                        ControllerName = "Orders",
+                                        ActionName = "Cancel"
+                                    };
+                                }
                             </td>
                         </tr>
+                        @await Html.PartialAsync("_Modal", cancelOrder)
                     }
                     </tbody>
                 </table>

@@ -1,5 +1,41 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model MedicationInventoryManagement.Models.ViewModels.OrderViewModel;
+
 @{
+    ViewData["Title"] = "Order Details";
 }
+
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <h2 class="card-title">Order Details</h2>
+                <div>
+                    <h4>Order Name: @Model.Order.OrderName</h4>
+                    <h4>Order Date: @Model.Order.OrderDate?.ToString("dd MMM yyyy")</h4>
+                    <h4>Status: @Model.Order.Status</h4>
+                </div>
+                <hr />
+                <h3>Medications</h3>
+                <div>
+                    @foreach (var medication in Model.Order.OrderMedications)
+                    {
+                        <div class="mb-3">
+                            <label>Medication Name: @medication.Medication.MedicationName</label>
+                            <br />
+                            <label>Quantity: @medication.NewQuantity</label>
+                            <br />
+                            @if (medication.Medication.ExpirationDate.HasValue)
+                            {
+                                <input type="date" value="@medication.Medication.ExpirationDate?.ToString("dd MMM yyyy")" class="form-control" readonly />
+                            }
+                            else
+                            {
+                                <input type="date" class="form-control"/>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
