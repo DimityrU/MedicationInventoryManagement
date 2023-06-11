@@ -3,6 +3,7 @@ using AutoMapper;
 using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services;
+using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -13,16 +14,12 @@ namespace TestMedicationInventoryManagement.Notifications;
 public class GetAllNotificationTest
 {
     private MMContext _context;
-    private NotificationsService _service;
+    private INotificationsService _service;
     private Mock<IMapper>? _mapper;
 
     [TestInitialize]
     public void SetUp()
     {
-        var options = new DbContextOptionsBuilder<MMContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        _context = new MMContext(options);
         _mapper = new Mock<IMapper>();
 
         var serviceProvider = new ServiceCollection()

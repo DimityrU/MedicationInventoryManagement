@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Services;
+using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -13,16 +14,12 @@ public class ReduceMedicationTest
     private Mock<MMContext>? _mockContext;
     private Mock<DbSet<Medication>>? _mockSet;
     private MMContext _context;
-    private MedicationService _service;
+    private IMedicationService _service;
     private Mock<IMapper>? _mapper;
 
     [TestInitialize]
     public void SetUp()
     {
-        var options = new DbContextOptionsBuilder<MMContext>()
-            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
-            .Options;
-        _context = new MMContext(options);
         _mapper = new Mock<IMapper>();
 
         var serviceProvider = new ServiceCollection()

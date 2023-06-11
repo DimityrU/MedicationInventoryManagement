@@ -1,4 +1,5 @@
 ﻿using MedicationInventoryManagement.Models;
+using MedicationInventoryManagement.Models.ViewModels;
 using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -11,12 +12,14 @@ namespace MedicationInventoryManagement.Controllers
 
         private readonly IMedicationService _medicationService;
         private readonly INotificationsService _notificationsService;
+        private readonly IOrderService _orderService;
 
 
-        public HomeController(IMedicationService medicationService, INotificationsService notificationsService)
+        public HomeController(IMedicationService medicationService, INotificationsService notificationsService, IOrderService orderService)
         {
             _medicationService = medicationService;
             _notificationsService = notificationsService;
+            _orderService = orderService;
         }
 
         [Authorize]
@@ -29,25 +32,24 @@ namespace MedicationInventoryManagement.Controllers
                 {
                     ModelState.AddModelError("", TempData["ErrorMessage"]?.ToString() ?? "Error occurred! Please try again!");
                 }
-                else
+
+                var response = await _notificationsService.GetAllNotifications();
+                var medications = await _medicationService.GetAllMedications();
+
+                foreach (var medication in medications)
                 {
-                    var response = await _notificationsService.GetAllNotifications();
-                    var medications = await _medicationService.GetAllMedications();
-
-                    foreach (var medication in medications)
-                    {
-                        await _notificationsService.CheckLowQuantityNotification(medication.MedicationId);
-                        await _notificationsService.CheckExpirationDateNotification(medication.MedicationId);
-                    }
-
-                    var allMedications = new AllMedicationsViewModel
-                    {
-                        Medications = medications,
-                        Notifications = response.Notifications
-                    };
-
-                    return View(allMedications);
+                    await _notificationsService.CheckLowQuantityNotification(medication.MedicationId);
+                    await _notificationsService.CheckExpirationDateNotification(medication.MedicationId);
                 }
+
+                var allMedications = new AllMedicationsViewModel
+                {
+                    Medications = medications,
+                    Notifications = response.Notifications
+                };
+
+                return View(allMedications);
+                
             }
             catch (Exception)
             {
@@ -58,21 +60,29 @@ namespace MedicationInventoryManagement.Controllers
         }
 
         [Authorize]
-        public async Task<IActionResult> Delete(Guid medicationId)
+        public async Task<IActionResult> Delete(Guid id)
         {
             try
             {
-                if (medicationId == Guid.Empty)
+                if (id == Guid.Empty)
                 {
                     TempData["ErrorMessage"] = "System error, please try again later.";
                 }
                 else
                 {
-                    await _notificationsService.DeleteNotification(medicationId);
-                    var response = await _medicationService.RemoveMedication(medicationId);
-                    if (!response.Success)
+                    var ordered = _orderService.CheckOrder(id);
+                    if (!ordered)
                     {
-                        TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+                        await _notificationsService.DeleteNotification(id);
+                        var response = await _medicationService.RemoveMedication(id);
+                        if (!response.Success)
+                        {
+                            TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;
+                        }
+                    }
+                    else
+                    {
+                        TempData["ErrorMessage"] = "There is an order for this medication, you cannot remove it!";
                     }
                 }
             }
@@ -135,17 +145,17 @@ namespace MedicationInventoryManagement.Controllers
 
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> Reduce(Guid medicationId, int newQuantity)
+        public async Task<IActionResult> Reduce(Guid id, int newQuantity)
         {
             try
             {
-                if (medicationId == Guid.Empty)
+                if (id == Guid.Empty)
                 {
                     TempData["ErrorMessage"] = "System error, please try again later.";
                 }
                 else
                 {
-                    var response = await _medicationService.ReduceQuantity(medicationId, newQuantity);
+                    var response = await _medicationService.ReduceQuantity(id, newQuantity);
                     if (!response.Success)
                     {
                         TempData["ErrorMessage"] = response.Errors.FirstOrDefault().ErrorMessage;

@@ -25,9 +25,7 @@
                                 <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Medication</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="#notificationsPanel" data-bs-toggle="collapse">
-                                    <i class="fas fa-bell"></i> Notifications
-                                </a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Orders" asp-action="Index">Orders</a>
                             </li>
 
                         }
@@ -37,6 +35,11 @@
                         {
                             <li class="nav-item">
                                 <span class="nav-link text-dark">Welcome, @User.Identity.Name!</span>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" href="#notificationsPanel" data-bs-toggle="collapse">
+                                    Notifications <i class="fas fa-bell"></i>
+                                </a>
                             </li>
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-area="" asp-controller="LogIn" asp-action="LogOut">Log Out</a>
@@ -55,7 +58,7 @@
         </nav>
     </header>
     <div class="container">
-        <div class="collapse position-fixed start-0 w-25" id="notificationsPanel">
+        <div class="collapse position-fixed end-0 w-25" id="notificationsPanel">
             @if (User.Identity.IsAuthenticated && !ViewContext.RouteData.Values["controller"].Equals("LogIn"))
             {
                 @await Html.PartialAsync("_NotificationPanel.cshtml", Model.Notifications, ViewData)
@@ -75,6 +78,7 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="https://kit.fontawesome.com/b66a1c4711.js" crossorigin="anonymous"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

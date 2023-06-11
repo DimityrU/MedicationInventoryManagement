@@ -8,6 +8,8 @@ public interface IMedicationService
 {
     public Task<IEnumerable<MedicationDTO>> GetAllMedications();
 
+    public Task<IEnumerable<MedicationDTO>> GetAllMedicationsForOrder();
+
     public Task<BaseResponse> AddMedication(MedicationDTO medicationRequest);
 
     public Task<BaseResponse> RemoveMedication(Guid medicationId);

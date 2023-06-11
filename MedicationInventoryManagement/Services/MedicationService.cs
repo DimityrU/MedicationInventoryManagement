@@ -20,7 +20,7 @@ public class MedicationService : IMedicationService
 
     public async Task<IEnumerable<MedicationDTO>> GetAllMedications()
     {
-        var medications = await _context.Medications.ToListAsync();
+        var medications = await _context.Medications.Where(m => m.ExpirationDate != null).ToListAsync();
         var medicationResponse = new List<MedicationDTO>();
 
         foreach (var medication in medications)
@@ -29,6 +29,15 @@ public class MedicationService : IMedicationService
         }
 
         return medicationResponse;
+    }
+
+    public async Task<IEnumerable<MedicationDTO>> GetAllMedicationsForOrder()
+    {
+        var medications = await GetAllMedications();
+
+        var medicationsForOrder = medications.Where(m => m.ExpirationDate > DateTime.Now.AddMonths(1)).AsEnumerable();
+
+        return medicationsForOrder;
     }
 
     public async Task<BaseResponse> AddMedication(MedicationDTO medicationRequest)

@@ -1,77 +1,100 @@
-﻿@model MedicationInventoryManagement.Models.AllMedicationsViewModel;
+﻿@model MedicationInventoryManagement.Models.ViewModels.AllMedicationsViewModel;
 
 @{
     ViewData["Title"] = "Medication Inventory";
 }
 
-
-<div class="position-fixed end-0 me-3">
+<div class="position-fixed end-0 me-1 w-25">
     @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
     {
-        @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage);
+        @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage)
+        ;
     }
 </div>
 
-<div class="text-center">
-    <h1 class="mb-5">Medication Inventory</h1>
-    <a asp-controller="Home" asp-action="Create" class="btn btn-primary mb-5">Add new medication</a>
-</div>
-
-@if (@Model.Medications != null && @Model.Medications.Count() > 0)
-{
-    <table class="table table-striped">
-    <thead>
-    <tr>
-        <th>Medication Name</th>
-        <th>Expiration Date</th>
-        <th>Quantity</th>
-        <th>Options</th>
-    </tr>
-    </thead>
-    <tbody>
-    @foreach (var medication in Model.Medications)
-    {
-        <tr>
-            <td>@medication.MedicationName</td>
-            <td>@medication.ExpirationDate.ToString("dd.MM.yyyy")</td>
-            <td>@medication.Quantity</td>
-            <td>
-                    <a type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-Remove-@medication.MedicationId">Remove</a>
-                    <a type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal-Reduce-@medication.MedicationId">Reduce Quantity</a>
-                @{
-                    var removeMedication = new ModalData()
-                    {
-                        Id = medication.MedicationId,
-                        MessageText = "Are you sure you want to remove this medication from the inventory?",
-                        ButtonText = "Remove",
-                        ButtonType = "danger",
-                        ControllerName = "Home",
-                        ActionName = "Delete"
-                    };
-                    var reduceQuantity = new ModalData()
-                    {
-                        Id = medication.MedicationId,
-                        MessageText = "",
-                        ButtonText = "Reduce",
-                        ButtonType = "warning",
-                        ControllerName = "Home",
-                        ActionName = "Reduce",
-                        Quantity = medication.Quantity
-                    };
-                }
-            </td>
-        </tr>
-        @await Html.PartialAsync("_Modal", removeMedication)
-        @await Html.PartialAsync("_Modal", reduceQuantity)
-    }
-    </tbody>
-</table>
-}
-else
-{
-    <div class="position-fixed top-50 start-50 translate-middle">
-        <div class="alert alert-warning" role="alert">
-            <h3>No medication in System</h3>
+<div class="row justify-content-center">
+    <div class="col-lg-7">
+        <div class="text-center mt-1 mb-4">
+            <a href="@Url.Action("Create", "Home")" class="btn btn-primary btn-sm">Add new medication</a>
         </div>
+        @if (@Model.Medications != null && @Model.Medications.Count() > 0)
+        {
+            <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+                <div class="card-body">
+                    <h2 class="card-title">Medication Inventory</h2>
+                    <table class="table table-hover">
+                        <thead>
+                        <tr>
+                            <th>Medication Name</th>
+                            <th>Expiration Date</th>
+                            <th>Quantity</th>
+                            <th>Options</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var medication in Model.Medications)
+                        {
+                            var color = string.Empty;
+                            if (medication.ExpirationDate < DateTime.Now)
+                            {
+                                color = "danger";
+                            }
+                            else if (medication.Quantity <= 10 || medication.ExpirationDate < DateTime.Now.Date.AddMonths(1))
+                            {
+                                color = "warning";
+                            }
+                            <tr class="table-@color">
+                                <td>@medication.MedicationName</td>
+                                <td>@(medication.ExpirationDate.HasValue ? medication.ExpirationDate.Value.ToString("dd MMM yyyy") : "")</td>
+                                <td>@medication.Quantity</td>
+                                <td>
+                                    @if (medication.ExpirationDate > DateTime.Now)
+                                    {
+                                        <a type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Reduce-@medication.MedicationId">Reduce Quantity</a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-warning btn-sm" disabled>Reduce Quantity</button>
+                                    }
+                                    <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Remove-@medication.MedicationId">Remove</a>
+                                    @{
+                                        var removeMedication = new ModalData()
+                                        {
+                                            Id = medication.MedicationId,
+                                            MessageText = "Are you sure you want to remove this medication from the inventory?",
+                                            ButtonText = "Remove",
+                                            ButtonType = "danger",
+                                            ControllerName = "Home",
+                                            ActionName = "Delete"
+                                        };
+                                        var reduceQuantity = new ModalData()
+                                        {
+                                            Id = medication.MedicationId,
+                                            MessageText = "",
+                                            ButtonText = "Reduce",
+                                            ButtonType = "warning",
+                                            ControllerName = "Home",
+                                            ActionName = "Reduce",
+                                            Quantity = medication.Quantity
+                                        };
+                                    }
+                                </td>
+                            </tr>
+                            @await Html.PartialAsync("_Modal", reduceQuantity)
+                            @await Html.PartialAsync("_Modal", removeMedication)
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="position-fixed mt-5 start-50 translate-middle">
+                <div class="alert alert-warning" role="alert">
+                    <h3>No medication in System</h3>
+                </div>
+            </div>
+        }
     </div>
-}
+</div>

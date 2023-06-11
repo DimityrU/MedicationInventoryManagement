@@ -17,14 +17,14 @@ public partial class Medication
     [StringLength(50)]
     public string MedicationName { get; set; }
 
-    public int Quantity { get; set; }
+    public int? Quantity { get; set; }
 
     [Column(TypeName = "date")]
-    public DateTime ExpirationDate { get; set; }
+    public DateTime? ExpirationDate { get; set; }
 
     [InverseProperty("Medication")]
     public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
 
     [InverseProperty("Medication")]
-    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
+    public virtual ICollection<OrderMedication> OrderMedications { get; set; } = new List<OrderMedication>();
 }

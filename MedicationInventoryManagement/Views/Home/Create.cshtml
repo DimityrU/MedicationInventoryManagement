@@ -1,4 +1,5 @@
-﻿@model MedicationInventoryManagement.Models.MedicationViewModel
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model MedicationInventoryManagement.Models.ViewModels.MedicationViewModel
 
 <div class="position-fixed end-0 col-4">
     <div class="container">
@@ -13,7 +14,7 @@
     <div class="col-lg-5">
         <div class="card shadow-lg p-3 mb-5 bg-white rounded">
             <div class="card-body">
-                <h2 class="card-title">Create Medication</h2>
+                <h2 class="card-title">Add Medication</h2>
 
                 <form asp-controller="Home" asp-action="Create" method="post">
                     <div class="form-group mb-4">

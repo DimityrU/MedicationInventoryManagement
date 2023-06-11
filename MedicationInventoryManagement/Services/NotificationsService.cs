@@ -86,7 +86,7 @@ public class NotificationsService : INotificationsService
         var response = new BaseResponse();
         try
         {
-            if (await NotificationExist(medicationId, typeExpiring) && await NotificationExist(medicationId, typeExpired))
+            if (await NotificationExist(medicationId, typeExpiring) || await NotificationExist(medicationId, typeExpired))
             {
                 return response;
             }

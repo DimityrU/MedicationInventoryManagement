@@ -1,0 +1,64 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model MedicationInventoryManagement.Models.ViewModels.OrderViewModel
+
+@{
+    ViewData["Title"] = "Place Order";
+    var medicationId = Model.Order.OrderMedications[0].Medication.MedicationId;
+    var medicationName = Model.Order.OrderMedications[0].Medication.MedicationName;
+    var selectListItems = Model.Order.OrderMedications.Select(m => new SelectListItem
+    {
+        Value = m.Medication.MedicationId.ToString(),
+        Text = m.Medication.MedicationName,
+        Selected = m.Medication.MedicationId == medicationId && m.Medication.MedicationName == medicationName
+    }).ToList();
+}
+
+<div class="position-fixed end-0 me-3">
+    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
+    {
+        @await Html.PartialAsync("_ErrorMessage", error.ErrorMessage)
+        ;
+    }
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-5">
+        <div class="card shadow-lg p-3 mb-5 bg-white rounded">
+            <div class="card-body">
+                <h2 class="card-title">Place Order</h2>
+                <form id="orderForm" asp-controller="Orders" asp-action="Create" method="post">
+                    <div id="medicationsContainer">
+                        <div class="row mb-3">
+                            <div class="form-group col-md-6">
+                                <label for="Order.OrderMedications[0].Medication.MedicationName">Medication Name</label>
+                                <select asp-for="Order.OrderMedications[0].Medication.MedicationId" asp-items="selectListItems" class="form-control hide"></select>
+                                <input type="text" name="Order.OrderMedications[0].Medication.MedicationName" class="form-control" placeholder="Name">
+                                <input type="checkbox" id="sameBatchCheckbox" onclick="toggleMedicationInput(this)">
+                                <label for="sameBatchCheckbox">Same Batch</label>
+
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="Order.OrderMedications[0].newQuantity">Quantity</label>
+                                <input name="Order.OrderMedications[0].newQuantity" class="form-control" type="number" min="30" max="100" placeholder="30-100" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-4">
+                        <button type="button" class="btn btn-secondary" id="addMedicationLineButton"><i class="fas fa-plus"></i> Medication</button>
+                    </div>
+                    <div class="form-group mb-4">
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Place Order</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        var selectListItems = @Html.Raw(Json.Serialize(Model.Order.OrderMedications.Select(m => new { Value = m.Medication.MedicationId, Text = m.Medication.MedicationName.ToString() })));
+    </script>
+
+    <script src="~/js/order-medication.js" asp-append-version="true"></script>
+}

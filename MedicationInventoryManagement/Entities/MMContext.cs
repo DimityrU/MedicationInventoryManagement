@@ -23,6 +23,8 @@ public partial class MMContext : DbContext
 
     public virtual DbSet<Order> Orders { get; set; }
 
+    public virtual DbSet<OrderMedication> OrderMedications { get; set; }
+
     public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -60,10 +62,19 @@ public partial class MMContext : DbContext
         modelBuilder.Entity<Order>(entity =>
         {
             entity.Property(e => e.OrderId).HasDefaultValueSql("(newid())");
+        });
 
-            entity.HasOne(d => d.Medication).WithMany(p => p.Orders)
+        modelBuilder.Entity<OrderMedication>(entity =>
+        {
+            entity.Property(e => e.OrderMedicationId).HasDefaultValueSql("(newid())");
+
+            entity.HasOne(d => d.Medication).WithMany(p => p.OrderMedications)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Orders_Medications");
+                .HasConstraintName("FK_OrderMedication_Medications");
+
+            entity.HasOne(d => d.Order).WithMany(p => p.OrderMedications)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_OrderMedication_Orders");
         });
 
         modelBuilder.Entity<User>(entity =>
