@@ -31,6 +31,15 @@ public class MedicationService : IMedicationService
         return medicationResponse;
     }
 
+    public async Task<IEnumerable<MedicationDTO>> GetAllMedicationsForOrder()
+    {
+        var medications = await GetAllMedications();
+
+        var medicationsForOrder = medications.Where(m => m.ExpirationDate > DateTime.Now.AddMonths(1)).AsEnumerable();
+
+        return medicationsForOrder;
+    }
+
     public async Task<BaseResponse> AddMedication(MedicationDTO medicationRequest)
     {
         var response = new BaseResponse();

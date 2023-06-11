@@ -165,7 +165,7 @@ public class OrderService : IOrderService
 
         try
         {
-            var updatedMedications = await UpdateMedication(order);
+            var updatedMedications = await UpdateMedication(order.OrderMedications);
             if (updatedMedications == null)
             {
                 await transaction.RollbackAsync();
@@ -224,12 +224,12 @@ public class OrderService : IOrderService
         return new OrderDTO { OrderName = orderName, OrderDate = DateTime.Now, Status = "shipped" };
     }
 
-    private async Task<List<Medication>> UpdateMedication(OrderDTO order)
+    private async Task<List<Medication>> UpdateMedication(List<OrderMedicationDTO> orderMedications)
     {
         var medicationsInDb = await _context.Medications.ToListAsync();
         var updatedMedications = new List<Medication>();
 
-        foreach (var orderMedication in order.OrderMedications)
+        foreach (var orderMedication in orderMedications)
         {
             var medicationInDb = medicationsInDb.FirstOrDefault(m => m.MedicationId == orderMedication.Medication.MedicationId);
 
@@ -238,6 +238,7 @@ public class OrderService : IOrderService
                 if (medicationInDb.Quantity == null)
                 {
                     medicationInDb.Quantity = orderMedication.NewQuantity;
+                    medicationInDb.ExpirationDate = orderMedication.Medication.ExpirationDate;
                 }
                 else
                 {

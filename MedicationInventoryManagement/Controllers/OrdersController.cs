@@ -23,7 +23,7 @@ namespace MedicationInventoryManagement.Controllers
         private async Task<OrderViewModel> CreateOrderViewModel()
         {
             var notificationResponse = await _notificationsService.GetAllNotifications();
-            var medications = await _medicationService.GetAllMedications();
+            var medications = await _medicationService.GetAllMedicationsForOrder();
 
             var order = new OrderDTO
             {
@@ -151,6 +151,14 @@ namespace MedicationInventoryManagement.Controllers
                     if (!response.Success)
                     {
                         TempData["ErrorMessage"] = "Cannot finish the order! Please try again";
+                    }
+                    else
+                    {
+                        foreach (var medication in order.OrderMedications)
+                        {
+                            await _notificationsService.DeleteNotification(medication.Medication.MedicationId,
+                                "low quantity");
+                        }
                     }
                 }
             }

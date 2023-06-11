@@ -48,7 +48,14 @@
                                 <td>@(medication.ExpirationDate.HasValue ? medication.ExpirationDate.Value.ToString("dd MMM yyyy") : "")</td>
                                 <td>@medication.Quantity</td>
                                 <td>
-                                    <a type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Reduce-@medication.MedicationId">Reduce Quantity</a>
+                                    @if (medication.ExpirationDate > DateTime.Now)
+                                    {
+                                        <a type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Reduce-@medication.MedicationId">Reduce Quantity</a>
+                                    }
+                                    else
+                                    {
+                                        <button class="btn btn-warning btn-sm" disabled>Reduce Quantity</button>
+                                    }
                                     <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Remove-@medication.MedicationId">Remove</a>
                                     @{
                                         var removeMedication = new ModalData()
