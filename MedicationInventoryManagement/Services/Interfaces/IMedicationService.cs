@@ -15,6 +15,4 @@ public interface IMedicationService
     public Task<BaseResponse> RemoveMedication(Guid medicationId);
 
     public Task<BaseResponse> ReduceQuantity(Guid medicationId, int newQuantity);
-
-    public Task<BaseResponse> AddOrderedMedications(List<MedicationDTO> medicationRequest);
 }

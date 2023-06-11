@@ -122,30 +122,4 @@ public class MedicationService : IMedicationService
 
         return response;
     }
-
-    public async Task<BaseResponse> AddOrderedMedications(List<MedicationDTO> medicationRequest)
-    {
-        var response = new BaseResponse();
-
-        try
-        {
-            var medications = new List<Medication>();
-            foreach (var medication in medicationRequest)
-            {
-                if (medication.MedicationName != null)
-                {
-                    medication.MedicationId = Guid.Empty;
-                    medications.Add(_mapper.Map<Medication>(medication));
-                }
-            }
-            await _context.Medications.AddRangeAsync(medications);
-            await _context.SaveChangesAsync();
-        }
-        catch (Exception)
-        {
-            response.AddError("Error occurred while adding medication.");
-        }
-
-        return response;
-    }
 }

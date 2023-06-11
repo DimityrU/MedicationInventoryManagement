@@ -2,6 +2,7 @@
 using MedicationInventoryManagement.Entities;
 using MedicationInventoryManagement.Models;
 using MedicationInventoryManagement.Services;
+using MedicationInventoryManagement.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 
@@ -12,7 +13,7 @@ public class AddMedicationTest
 {
     private Mock<MMContext>? _mockContext;
     private Mock<DbSet<Medication>>? _mockSet;
-    private MedicationService _service;
+    private IMedicationService _service;
     private Mock<IMapper>? _mapper;
 
     [TestInitialize]
