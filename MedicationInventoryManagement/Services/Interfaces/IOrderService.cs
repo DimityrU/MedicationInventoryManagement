@@ -14,4 +14,5 @@ public interface IOrderService
     public Task<BaseResponse> CancelOrder(Guid id);
 
     public Task<OrderDTO> GetOrder(Guid id);
+    Task<BaseResponse> FinishOrder(OrderDTO order);
 }

@@ -128,11 +128,39 @@ namespace MedicationInventoryManagement.Controllers
                 var order = await _orderService.GetOrder(id);
                 model.Order = order;
             }
-            catch (Exception)
+            catch (Exception e)
             {
-                throw;
+                TempData["ErrorMessage"] = e.Message ;
             }
             return View(model);
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> Details(OrderDTO order)
+        {
+            try
+            {
+                if (order == null)
+                {
+                    TempData["ErrorMessage"] = "System error, please try again later.";
+                }
+                else
+                {
+                    var response = await _orderService.FinishOrder(order);
+                    if (!response.Success)
+                    {
+                        TempData["ErrorMessage"] = "Cannot finish the order! Please try again";
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                TempData["ErrorMessage"] = e.Message;
+                return View();
+            }
+
+            return RedirectToAction("Index", "Home");
         }
 
         public async Task<IActionResult> Cancel(Guid id)

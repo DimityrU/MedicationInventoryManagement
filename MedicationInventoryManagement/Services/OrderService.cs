@@ -79,6 +79,26 @@ public class OrderService : IOrderService
         return response;
     }
     
+    public async Task<OrderDTO> GetOrder(Guid id)
+    {
+        var response = new OrderDTO();
+        try
+        {
+            var order = await _context.Orders.Where(o => o.OrderId == id)
+                .Include(o => o.OrderMedications)
+                .ThenInclude(o => o.Medication)
+                .FirstOrDefaultAsync();
+
+            response =_mapper.Map<OrderDTO>(order);
+        }
+        catch (Exception)
+        {
+            return null;
+        }
+
+        return response;
+    }
+
     public bool CheckOrder(Guid id)
     {
         return _context.OrderMedications.Any(o => o.MedicationId == id);
@@ -117,6 +137,7 @@ public class OrderService : IOrderService
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
             if (order == null)
             {
+                await transaction.RollbackAsync();
                 response.AddError("Error occurred while canceling the order!");
                 return response;
             }
@@ -137,24 +158,96 @@ public class OrderService : IOrderService
         return response;
     }
 
-    public async Task<OrderDTO> GetOrder(Guid id)
+    public async Task<BaseResponse> FinishOrder(OrderDTO order)
     {
-        var response = new OrderDTO();
+        var response = new BaseResponse();
+        await using var transaction = await _context.Database.BeginTransactionAsync();
+
         try
         {
-            var order = await _context.Orders.Where(o => o.OrderId == id)
-                .Include(o => o.OrderMedications)
-                .ThenInclude(o => o.Medication)
-                .FirstOrDefaultAsync();
+            var updatedMedications = await UpdateMedication(order);
+            if (updatedMedications == null)
+            {
+                await transaction.RollbackAsync();
+                response.AddError("Error occurred while finishing the order!");
+                return response;
+            }
 
-            response =_mapper.Map<OrderDTO>(order);
+            _context.Medications.UpdateRange(updatedMedications);
+            await _context.SaveChangesAsync();
+
+            var orderMedicationsToRemove = await _context.OrderMedications.Where(o => o.OrderId == order.OrderId).ToListAsync();
+            if (orderMedicationsToRemove == null)
+            {
+                await transaction.RollbackAsync();
+                response.AddError("Error occurred while finishing the order!");
+                return response;
+            }
+
+            _context.OrderMedications.RemoveRange(orderMedicationsToRemove);
+            await _context.SaveChangesAsync();
+            
+            var orderToUpdate = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == order.OrderId);
+            if (orderToUpdate == null)
+            {
+                await transaction.RollbackAsync();
+                response.AddError("Error occurred while finishing the order!");
+                return response;
+            }
+            orderToUpdate.Status = "arrived";
+            _context.Orders.Update(orderToUpdate);
+            await _context.SaveChangesAsync();
+
+            await transaction.CommitAsync();
         }
-        catch (Exception)
+        catch (Exception e)
         {
-            return null;
+            await transaction.RollbackAsync();
+            response.AddError($"An error occurred: {e.Message}");
         }
 
         return response;
+    }
+
+    private async Task<OrderDTO> GenerateOrderData()
+    {
+        var orderCheck = true;
+        var orderName = "";
+        var orderNumber = _context.Orders.Count() + 1;
+        while (orderCheck)
+        {
+            orderName = "ORD-" + orderNumber.ToString("D4");
+            orderCheck = _context.Orders.Any(o => o.OrderName == orderName);
+            orderNumber++;
+        }
+
+        return new OrderDTO { OrderName = orderName, OrderDate = DateTime.Now, Status = "shipped" };
+    }
+
+    private async Task<List<Medication>> UpdateMedication(OrderDTO order)
+    {
+        var medicationsInDb = await _context.Medications.ToListAsync();
+        var updatedMedications = new List<Medication>();
+
+        foreach (var orderMedication in order.OrderMedications)
+        {
+            var medicationInDb = medicationsInDb.FirstOrDefault(m => m.MedicationId == orderMedication.Medication.MedicationId);
+
+            if (medicationInDb != null)
+            {
+                if (medicationInDb.Quantity == null)
+                {
+                    medicationInDb.Quantity = orderMedication.NewQuantity;
+                }
+                else
+                {
+                    medicationInDb.Quantity += orderMedication.NewQuantity;
+                }
+                updatedMedications.Add(medicationInDb);
+            }
+        }
+
+        return updatedMedications;
     }
 
     private async Task<OrderMedication> HandleMedication(Order order, OrderMedicationDTO orderMedicationDto)
@@ -176,20 +269,5 @@ public class OrderService : IOrderService
             var oldMedication = _mapper.Map<Medication>(medication);
             return new OrderMedication { OrderId = order.OrderId, MedicationId = oldMedication.MedicationId, NewQuantity = orderMedicationDto.NewQuantity };
         }
-    }
-
-    private async Task<OrderDTO> GenerateOrderData()
-    {
-        var orderCheck = true;
-        var orderName = "";
-        var orderNumber = _context.Orders.Count() + 1;
-        while (orderCheck)
-        {
-            orderName = "ORD-" + orderNumber.ToString("D4");
-            orderCheck = _context.Orders.Any(o => o.OrderName == orderName);
-            orderNumber++;
-        }
-
-        return new OrderDTO { OrderName = orderName, OrderDate = DateTime.Now, Status = "shipped" };
     }
 }

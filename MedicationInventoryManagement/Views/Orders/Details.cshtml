@@ -9,43 +9,47 @@
         <div class="card shadow-lg p-3 mb-5 bg-white rounded">
             <div class="card-body">
                 <h2 class="card-title">Order Details</h2>
-                <div>
-                    <p><strong>Order Name:</strong> @Model.Order.OrderName</p>
-                    <p><strong>Order Date:</strong> @Model.Order.OrderDate?.ToString("dd MMM yyyy")</p>
-                    <p><strong>Status:</strong> @Model.Order.Status</p>
-                </div>
-                <hr />
-                <h3>Medications</h3>
-                <div>
-                    @foreach (var medication in Model.Order.OrderMedications)
-                    {
-                        <div class="row mb-3">
-                            <div class="col">
-                                <label for="medicationName">Medication Name:</label>
-                                <input id="medicationName" value="@medication.Medication.MedicationName" class="form-control" readonly />
+                <form asp-action="Details" asp-controller="Orders" method="post">
+                    <input type="hidden" asp-for="Order.OrderId" />
+                    <div>
+                        <p><strong>Order Name:</strong> @Model.Order.OrderName</p>
+                        <p><strong>Order Date:</strong> @Model.Order.OrderDate?.ToString("dd MMM yyyy")</p>
+                        <p><strong>Status:</strong> @Model.Order.Status</p>
+                    </div>
+                    <hr />
+                    <h3>Medications</h3>
+                    <div>
+                        @for (var i = 0; i < Model.Order.OrderMedications.Count; i++)
+                        {
+                            <div class="row mb-3">
+                                <input type="hidden" name="Order.OrderMedications[@i].OrderMedicationId" value="@Model.Order.OrderMedications[i].OrderMedicationId" />
+                                <input type="hidden" name="Order.OrderMedications[@i].Medication.MedicationId" value="@Model.Order.OrderMedications[i].Medication.MedicationId" />
+                                <div class="col">
+                                    <label>Medication Name:</label>
+                                    <input name="Order.OrderMedications[@i].Medication.MedicationName" value="@Model.Order.OrderMedications[i].Medication.MedicationName" class="form-control" readonly />
+                                </div>
+                                <div class="col">
+                                    <label>Quantity:</label>
+                                    <input name="Order.OrderMedications[@i].NewQuantity" value="@Model.Order.OrderMedications[i].NewQuantity" class="form-control" readonly />
+                                </div>
+                                <div class="col">
+                                    <label>Expiration Date:</label>
+                                    @if (Model.Order.OrderMedications[i].Medication.ExpirationDate.HasValue)
+                                    {
+                                        <input name="Order.OrderMedications[@i].Medication.ExpirationDate" type="date" value="@Model.Order.OrderMedications[i].Medication.ExpirationDate.Value.Date.ToString("yyyy-MM-dd")" class="form-control" readonly />
+                                    }
+                                    else
+                                    {
+                                        <input name="Order.OrderMedications[@i].Medication.ExpirationDate" type="date" class="form-control" required />
+                                    }
+                                </div>
                             </div>
-                            <div class="col">
-                                <label for="quantity">Quantity:</label>
-                                <input id="quantity" value="@medication.NewQuantity" class="form-control" readonly />
-                            </div>
-                            <div class="col">
-                                @if (medication.Medication.ExpirationDate.HasValue)
-                                {
-                                    <label for="expirationDate">Expiration Date:</label>
-                                    <input id="expirationDate" type="date" value="@medication.Medication.ExpirationDate.Value.Date.ToString("yyyy-MM-dd")" class="form-control" readonly />
-                                }
-                                else
-                                {
-                                    <label for="expirationDate">Expiration Date:</label>
-                                    <input id="expirationDate" type="date" class="form-control" required/>
-                                }
-                            </div>
-                        </div>
-                    }
-                </div>
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-primary btn-sm">Mark as Arrived</button>
-                </div>
+                        }
+                    </div>
+                    <div class="d-flex justify-content-end">
+                        <button type="submit" class="btn btn-primary btn-sm">Mark as Arrived</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
