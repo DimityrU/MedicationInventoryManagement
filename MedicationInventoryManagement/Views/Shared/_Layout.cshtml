@@ -58,7 +58,7 @@
         </nav>
     </header>
     <div class="container">
-        <div class="collapse position-fixed end-0 w-25" id="notificationsPanel">
+        <div class="collapse position-fixed end-0 w-25 on-top" id="notificationsPanel">
             @if (User.Identity.IsAuthenticated && !ViewContext.RouteData.Values["controller"].Equals("LogIn"))
             {
                 @await Html.PartialAsync("_NotificationPanel.cshtml", Model.Notifications, ViewData)
