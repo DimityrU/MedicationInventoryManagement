@@ -21,7 +21,13 @@
         {
             <div class="card shadow-lg p-3 mb-5 bg-white rounded">
                 <div class="card-body">
-                    <h2 class="card-title">Medication Inventory</h2>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="card-title">Medication Inventory</h2>
+                        <div class="mb-3 w-25">
+                            <label for="searchFilter" class="form-label">Search Medication:</label>
+                            <input type="text" class="form-control" id="searchFilter" placeholder="Filter...">
+                        </div>
+                    </div>
                     <table class="table table-hover">
                         <thead>
                         <tr>
@@ -43,7 +49,7 @@
                             {
                                 color = "warning";
                             }
-                            <tr class="table-@color">
+                            <tr class="table-@color medication-row">
                                 <td>@medication.MedicationName</td>
                                 <td>@(medication.ExpirationDate.HasValue ? medication.ExpirationDate.Value.ToString("dd MMM yyyy") : "")</td>
                                 <td>@medication.Quantity</td>
@@ -98,3 +104,6 @@
         }
     </div>
 </div>
+@section scripts {
+    <script src="~/js/name-filter.js" asp-append-version="true"></script>
+}
