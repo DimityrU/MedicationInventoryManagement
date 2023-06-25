@@ -40,8 +40,10 @@
                                 <td>@(order.OrderDate.HasValue ? order.OrderDate.Value.ToString("dd MMM yyyy") : "")</td>
                                 <td>@order.OrderMedications.Count</td>
                                 <td>
-                                    <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" class="btn btn-success btn-sm">Details</a>
-                                    <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-Cancel-@order.OrderId">Cancel</a>
+                                    <a href="@Url.Action("Details", "Orders", new { id = order.OrderId })" 
+                                       class="btn btn-success btn-sm">Details</a>
+                                    <a type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
+                                       data-bs-target="#modal-Cancel-@order.OrderId">Cancel</a>
                                     @{
                                         var cancelOrder = new ModalData()
                                         {

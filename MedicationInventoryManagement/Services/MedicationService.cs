@@ -20,7 +20,10 @@ public class MedicationService : IMedicationService
 
     public async Task<IEnumerable<MedicationDTO>> GetAllMedications()
     {
-        var medications = await _context.Medications.Where(m => m.ExpirationDate != null).ToListAsync();
+        var medications = await _context.Medications
+            .Where(m => m.ExpirationDate != null)
+            .OrderBy(m => m.MedicationName)
+            .ToListAsync();
         var medicationResponse = new List<MedicationDTO>();
 
         foreach (var medication in medications)

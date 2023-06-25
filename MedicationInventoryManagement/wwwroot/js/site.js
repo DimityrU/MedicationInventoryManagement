@@ -2,10 +2,3 @@
 // for details on configuring this project to bundle and minify static web assets.
 
 // Write your JavaScript code.
-
-$('#notificationsPanel').on('show.bs.collapse', function () {
-    $.get('/Notifications/Notifications', function (data) {
-        $('#notificationsPanel').empty().html(data);
-    });
-});
-
