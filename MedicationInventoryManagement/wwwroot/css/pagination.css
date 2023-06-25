@@ -1,0 +1,19 @@
+﻿.dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+    background: #007bff;
+    border-color: #007bff;
+    color: white !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.current,
+.dataTables_wrapper .dataTables_paginate .paginate_button.current:hover {
+    background: #007bff;
+    border-color: #007bff;
+    color: white !important;
+}
+
+.dataTables_wrapper .dataTables_paginate .paginate_button.previous:not(.disabled):hover,
+.dataTables_wrapper .dataTables_paginate .paginate_button.next:not(.disabled):hover {
+    background: #28a745;
+    border-color: #28a745;
+    color: white !important;
+}
